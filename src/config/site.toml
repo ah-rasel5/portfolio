@@ -1,0 +1,189 @@
+[config.site]
+title = "Ahamed Rasel"
+description = "Personal website of Ahamed Rasel — projects, writing, and notes."
+pageTitle = "Ahamed Rasel"
+pageDescription = "Personal website of Ahamed Rasel — projects, writing, and notes."
+repository = "https://github.com/ah-rasel5/mysite"
+footerNote = "© Ahamed Rasel"
+
+[config.vibe]
+showTrail = true
+
+[config.theme]
+# Available palettes:
+# green-soft, green-vivid, rose-soft, pink-soft, purple-soft, blue-soft, orange-soft, brown-soft
+palette = "blue-soft"
+
+[config.code]
+lightTheme = "catppuccin-latte"
+darkTheme = "catppuccin-macchiato"
+lineNumbers = true
+wrap = true
+preserveIndent = true
+collapseStyle = "collapsible-auto"
+
+[config.math]
+render = "katex" # "katex" | "mathjax"
+
+[config.comments]
+enabled = false
+provider = "none"
+show_on_posts = true
+
+[config.search]
+enabled = true
+shortcut = "mod+k"
+placeholder = "Search..."
+maxResults = 6
+
+[config.blog]
+postsPerPage = 6
+
+[config.comments.giscus]
+repo = ""
+repo_id = ""
+category = ""
+category_id = ""
+mapping = "pathname"
+strict = "0"
+reactions_enabled = "1"
+emit_metadata = "0"
+input_position = "top"
+light_theme = "light"
+dark_theme = "dark"
+lang = "en"
+loading = "lazy"
+
+[config.comments.utterances]
+repo = ""
+issue_term = "pathname"
+label = "comment"
+theme = "github-light"
+
+[config.comments.waline]
+server_url = ""
+lang = "en"
+dark = "html.dark"
+pageview = true
+comment = true
+
+[config.profile]
+name = "Ahamed Rasel"
+handle = "@ah-rasel5"
+role = "TODO: your role (e.g. Full-Stack Developer)"
+company = "TODO: your company or 'Independent'"
+location = "TODO: your city / Remote"
+email = "hello@ahamedrasel.com"
+website = "https://ahamedrasel.com"
+github = "https://github.com/ah-rasel5"
+meta = "TODO: short tagline"
+avatar = "/images/logo.png"
+
+[[config.topNav.links]]
+label = "Home"
+href = "/"
+
+[[config.topNav.links]]
+label = "Blog"
+href = "/blog"
+
+[[config.topNav.links]]
+label = "Projects"
+href = "/projects"
+
+[[config.topNav.links]]
+label = "Vibe"
+href = "/vibe"
+
+[[config.topNav.links]]
+label = "About"
+href = "/about"
+
+[config.home]
+layout = "grid"
+
+[config.home.quote]
+text = [
+  "Building thoughtful software,",
+  "sharing what I learn,",
+  "and keeping it all in one place.",
+]
+image = "/images/logo-with-name.png"
+
+[config.home.intro]
+title = "Hi, I'm Ahamed Rasel"
+name = "Ahamed Rasel"
+body = [
+  "TODO: Write 2–4 short lines about who you are and what you do.",
+  "This intro shows on the homepage — keep it warm and concise.",
+]
+image = "/images/logo-cat.png"
+
+[config.home.latest]
+count = 1
+heatmapWeeks = 24
+showHeatmapLatest = true
+excludeDraft = true
+startDate = ""
+dateArchiveBaseHref = ""
+
+[[config.home.navigation]]
+icon = "pen"
+title = "Blog"
+subtitle = "Essays, notes, and field reports"
+href = "/blog"
+
+[[config.home.navigation]]
+icon = "compass"
+title = "Projects"
+subtitle = "Selected work and case studies"
+href = "/projects"
+
+[[config.home.navigation]]
+icon = "briefcase"
+title = "Resume"
+subtitle = "Career profile and experience"
+href = "/about"
+
+[[config.home.navigation]]
+icon = "github"
+title = "Open Source"
+subtitle = "Code, experiments, and tools"
+href = "https://github.com/ah-rasel5"
+
+[[config.home.connect]]
+label = "GitHub"
+href = "https://github.com/ah-rasel5"
+icon = "github"
+
+[[config.home.connect]]
+label = "Website"
+href = "https://ahamedrasel.com"
+icon = "compass"
+
+[[config.home.connect]]
+label = "Blog"
+href = "/blog"
+icon = "book"
+
+[[config.home.connect]]
+label = "Projects"
+href = "/projects"
+icon = "repo"
+
+[[config.home.connect]]
+label = "Email"
+href = "mailto:hello@ahamedrasel.com"
+icon = "mail"
+
+[[config.home.doing]]
+text = "TODO: something you're working on"
+mark = "01"
+
+[[config.home.doing]]
+text = "TODO: something you're learning"
+mark = "02"
+
+[[config.home.doing]]
+text = "TODO: a goal or focus area"
+mark = "03"
