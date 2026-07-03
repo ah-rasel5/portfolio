@@ -3,7 +3,7 @@ title = "Ahamed Rasel"
 description = "Personal website of Ahamed Rasel — projects, writing, and notes."
 pageTitle = "Ahamed Rasel"
 pageDescription = "Personal website of Ahamed Rasel — projects, writing, and notes."
-repository = "https://github.com/ah-rasel5/mysite"
+repository = "https://github.com/ah-rasel5/portfolio"
 footerNote = "© Ahamed Rasel"
 
 [config.vibe]
