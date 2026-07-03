@@ -39,8 +39,9 @@ jobs:
 
       - name: Build site
         env:
-          SITE_URL: https://ahamedrasel.com
-          SITE_BASE: /
+          # No SITE_URL/SITE_BASE: astro.config.mjs auto-detects the GitHub
+          # Pages project page and serves under /mysite/. To move to a custom
+          # domain later, re-add public/CNAME and set SITE_URL/SITE_BASE=/.
           NAVFOLIO_COMMENTS_ENABLED: ${{ vars.NAVFOLIO_COMMENTS_ENABLED }}
           NAVFOLIO_COMMENTS_PROVIDER: ${{ vars.NAVFOLIO_COMMENTS_PROVIDER }}
           NAVFOLIO_GISCUS_REPO: ${{ vars.NAVFOLIO_GISCUS_REPO }}
