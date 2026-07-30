@@ -142,7 +142,14 @@ for (const file of lightweightContentFiles) {
 }
 
 const uiChars = [...chars].sort((a, b) => a.codePointAt(0)! - b.codePointAt(0)!).join('');
-if (!uiChars) throw new Error('No CJK UI characters were found for font subsetting.');
+
+// This site is English-only, so there is usually nothing to subset. The CJK font
+// remains a fallback layer in the global font stacks, and browsers only fetch it
+// when a glyph actually needs it — so skipping is safe rather than fatal.
+if (!uiChars) {
+  console.log('No CJK characters found in UI strings or content frontmatter — skipping subset.');
+  process.exit(0);
+}
 
 mkdirSync(join(projectRoot, 'scripts/fonts'), { recursive: true });
 mkdirSync(join(projectRoot, 'public/fonts'), { recursive: true });

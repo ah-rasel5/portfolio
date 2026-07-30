@@ -29,7 +29,7 @@ const vibes = await Promise.all(
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-palette={palette}>
+<html lang="en" data-palette={palette}>
   <head>
     <BaseHead title={`vibe | ${site.title}`} description="Small fragments of life and coding." />
     <style>
@@ -638,10 +638,10 @@ const vibes = await Promise.all(
                         type="button"
                         aria-expanded="false"
                         data-vibe-image-toggle
-                        data-expand-label={`展开 ${imageLayout.hiddenCount} 张`}
-                        data-collapse-label="收起图片"
+                        data-expand-label={`Show ${imageLayout.hiddenCount} more`}
+                        data-collapse-label="Show fewer"
                       >
-                        展开 {imageLayout.hiddenCount} 张
+                        Show {imageLayout.hiddenCount} more
                       </button>
                     )}
                   </div>
@@ -681,8 +681,8 @@ const vibes = await Promise.all(
               const isExpanded = group.classList.toggle('is-expanded');
               button.setAttribute('aria-expanded', String(isExpanded));
               button.textContent = isExpanded
-                ? (button.dataset.collapseLabel ?? '收起图片')
-                : (button.dataset.expandLabel ?? '展开图片');
+                ? (button.dataset.collapseLabel ?? 'Show fewer')
+                : (button.dataset.expandLabel ?? 'Show more');
             });
           });
       };

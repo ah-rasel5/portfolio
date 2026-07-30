@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "astro-navfolio",
+      "name": "ahamedrasel-portfolio",
       "dependencies": {
         "@astrojs/mdx": "^7.0.0",
         "@astrojs/rss": "^4.0.18",
