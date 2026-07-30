@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96" role="img" aria-label="Ahamed Rasel">
+  <rect width="320" height="96" rx="14" fill="#101c2e" />
+  <rect x="20" y="26" width="44" height="44" rx="11" fill="#2b4a72" />
+  <text
+    x="42"
+    y="48.5"
+    fill="#e8eef6"
+    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="19"
+    font-weight="600"
+    letter-spacing="1"
+    text-anchor="middle"
+    dominant-baseline="central"
+  >AR</text>
+  <text
+    x="80"
+    y="42"
+    fill="#e8eef6"
+    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="22"
+    font-weight="600"
+    letter-spacing="0.5"
+  >Ahamed Rasel</text>
+  <text
+    x="80"
+    y="65"
+    fill="#8fa6c2"
+    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="12"
+    font-weight="500"
+    letter-spacing="1.6"
+  >TECHNICAL WRITER</text>
+</svg>

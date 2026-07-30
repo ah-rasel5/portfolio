@@ -1,7 +1,7 @@
 {
-  "name": "navfolio",
-  "short_name": "navfolio",
-  "description": "A personal navigation portfolio starter built with Astro.",
+  "name": "Ahamed Rasel — Technical Writer & AI Automation",
+  "short_name": "Ahamed Rasel",
+  "description": "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",

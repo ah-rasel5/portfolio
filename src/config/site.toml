@@ -1,8 +1,8 @@
 [config.site]
 title = "Ahamed Rasel"
-description = "Personal website of Ahamed Rasel — projects, writing, and notes."
-pageTitle = "Ahamed Rasel"
-pageDescription = "Personal website of Ahamed Rasel — projects, writing, and notes."
+description = "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate."
+pageTitle = "Ahamed Rasel — Technical Writer & AI Automation"
+pageDescription = "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate."
 repository = "https://github.com/ah-rasel5/portfolio"
 footerNote = "© Ahamed Rasel"
 
@@ -70,14 +70,15 @@ comment = true
 [config.profile]
 name = "Ahamed Rasel"
 handle = "@ah-rasel5"
-role = "TODO: your role (e.g. Full-Stack Developer)"
-company = "TODO: your company or 'Independent'"
-location = "TODO: your city / Remote"
-email = "hello@ahamedrasel.com"
+role = "Senior Technical Writer"
+company = "AuthLab · WPManageNinja"
+location = "Sylhet, Bangladesh · Remote"
+email = "rasel.ahm55@gmail.com"
 website = "https://ahamedrasel.com"
 github = "https://github.com/ah-rasel5"
-meta = "TODO: short tagline"
-avatar = "/images/logo.png"
+meta = "Docs as a product decision — written sharp, then automated with AI agents & n8n."
+# Placeholder monogram mark — swap for your own photo/logo in public/images/
+avatar = "/images/avatar-placeholder.svg"
 
 [[config.topNav.links]]
 label = "Home"
@@ -104,20 +105,20 @@ layout = "grid"
 
 [config.home.quote]
 text = [
-  "Building thoughtful software,",
-  "sharing what I learn,",
-  "and keeping it all in one place.",
+  "Good documentation is a product decision,",
+  "not an afterthought.",
+  "Clear enough to finish, accurate enough to rely on.",
 ]
-image = "/images/logo-with-name.png"
+image = "/images/mark.svg"
 
 [config.home.intro]
-title = "Hi, I'm Ahamed Rasel"
+title = "I'm Ahamed Rasel"
 name = "Ahamed Rasel"
 body = [
-  "TODO: Write 2–4 short lines about who you are and what you do.",
-  "This intro shows on the homepage — keep it warm and concise.",
+  "I'm a technical writer who thinks like an engineer.",
+  "I turn million-user complexity into docs people actually finish — and build the AI and n8n systems that keep them that way long after I hit publish.",
 ]
-image = "/images/logo-cat.png"
+image = "/images/avatar-placeholder.svg"
 
 [config.home.latest]
 count = 1
@@ -130,25 +131,25 @@ dateArchiveBaseHref = ""
 [[config.home.navigation]]
 icon = "pen"
 title = "Blog"
-subtitle = "Essays, notes, and field reports"
+subtitle = "Notes on docs & AI"
 href = "/blog"
 
 [[config.home.navigation]]
 icon = "compass"
 title = "Projects"
-subtitle = "Selected work and case studies"
+subtitle = "Systems I've shipped"
 href = "/projects"
 
 [[config.home.navigation]]
 icon = "briefcase"
-title = "Resume"
-subtitle = "Career profile and experience"
+title = "Résumé"
+subtitle = "Experience & story"
 href = "/about"
 
 [[config.home.navigation]]
 icon = "github"
 title = "Open Source"
-subtitle = "Code, experiments, and tools"
+subtitle = "Code & experiments"
 href = "https://github.com/ah-rasel5"
 
 [[config.home.connect]]
@@ -157,9 +158,9 @@ href = "https://github.com/ah-rasel5"
 icon = "github"
 
 [[config.home.connect]]
-label = "Website"
-href = "https://ahamedrasel.com"
-icon = "compass"
+label = "LinkedIn"
+href = "https://www.linkedin.com/in/md-rasel-ahamed-8a4b72195"
+icon = "linkedin"
 
 [[config.home.connect]]
 label = "Blog"
@@ -173,17 +174,17 @@ icon = "repo"
 
 [[config.home.connect]]
 label = "Email"
-href = "mailto:hello@ahamedrasel.com"
+href = "mailto:rasel.ahm55@gmail.com"
 icon = "mail"
 
 [[config.home.doing]]
-text = "TODO: something you're working on"
+text = "Running an AI agent pipeline — Claude, Codex, and Google AI Studio — that keeps a 1.47M-user knowledge base current"
 mark = "01"
 
 [[config.home.doing]]
-text = "TODO: something you're learning"
+text = "Orchestrating the full docs lifecycle in n8n, from product changes to review-ready drafts"
 mark = "02"
 
 [[config.home.doing]]
-text = "TODO: a goal or focus area"
+text = "Writing about docs-as-product, prompt engineering, and practical AI automation"
 mark = "03"

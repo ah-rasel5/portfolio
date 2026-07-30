@@ -1,0 +1,40 @@
+---
+title: 'AI-Powered Knowledge Base Automation'
+description: 'A multi-tool AI agent pipeline, orchestrated in n8n, that keeps a 1.47M-user knowledge base accurate — drafting, reviewing, and flagging content across its entire lifecycle.'
+date: '2026-06-01T00:00:00+06:00'
+draft: false
+showHeroImage: false
+categories:
+  - AI Automation
+tags:
+  - AI Automation
+  - n8n
+  - Documentation
+comments: false
+sidebar:
+  enable: false
+  toc: false
+  relatedPosts: false
+---
+
+## The problem
+
+Documentation for a fast-moving product suite rots quietly. Every release, UI change, and new feature quietly invalidates something already published. With WPManageNinja's Fluent suite shipping continuously to **1.47M+ users**, keeping the knowledge base accurate by hand was a losing race — and the manual effort crowded out the work that actually mattered: good writing and good decisions.
+
+## What I built
+
+I architected a **multi-tool AI agent pipeline**, orchestrated end-to-end in **n8n**, that treats documentation as a living system rather than a static archive.
+
+- **Change monitoring** — the workflow watches for product changes and surfaces what documentation they touch.
+- **Drafting agents** — AI agents (Claude, OpenAI Codex, Google AI Studio) generate updates and first-pass drafts in the house style.
+- **Quality review** — a review layer checks drafts for accuracy, clarity, and consistency before anything reaches a human.
+- **Staleness detection** — the system continuously flags outdated articles across the knowledge base so nothing silently goes wrong.
+- **Human-in-the-loop publishing** — everything lands as a review-ready draft; people make the final call.
+
+## The stack
+
+n8n · Claude · OpenAI Codex · Google AI Studio · Markdown · custom prompt engineering and LLM integration
+
+## The outcome
+
+The pipeline **cut repetitive documentation effort dramatically**, freeing the team to focus on high-value content decisions instead of chasing changelogs. It reframed the writer's role from "keep everything current by hand" to "design the system that keeps everything current" — and earned AuthLab's **Noteworthy Contributor — Documentation** recognition in 2025.

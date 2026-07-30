@@ -7,6 +7,4 @@ tags:
   - note
 ---
 
-Just launched this site. 🚀 Short thoughts and quick updates will live here.
-
-{/* TODO: Replace with your own notes, or add more with `bun run vibe:new my-note`. */}
+New site is live. 🚀 This is where the short stuff lives — half-formed ideas about docs and AI automation, things I'm tinkering with in n8n, and the occasional win worth marking. Longer write-ups go on the [blog](/blog).

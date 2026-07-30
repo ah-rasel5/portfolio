@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import SmartImage from '../../components/SmartImage.astro';
 import BlogArticle from '../../layouts/BlogArticle.astro';
 import { sortByDateDesc } from '../../utils/content-dates';
 
@@ -16,8 +16,6 @@ if (!projectIndex) {
 
 const { Content, headings } = await render(projectIndex);
 
-const relatedProjects = projects;
-
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 function withBase(href: string) {
@@ -27,6 +25,31 @@ function withBase(href: string) {
 
   return `${basePath}${href.startsWith('/') ? href : `/${href}`}`;
 }
+
+// Filter chips are derived from `categories` frontmatter. No categories anywhere
+// means no filter bar — the grid just renders everything.
+const filters = [...new Set(projects.flatMap((project) => project.data.categories))].sort((a, b) =>
+  a.localeCompare(b),
+);
+
+// Two-letter monogram standing in for a missing cover image.
+function monogram(title: string) {
+  const words = title.split(/[\s–—-]+/).filter(Boolean);
+  const letters = words.length > 1 ? `${words[0][0]}${words[1][0]}` : title.slice(0, 2);
+
+  return letters.toUpperCase();
+}
+
+const cards = projects.map((project) => ({
+  href: withBase(`/projects/${project.id}/`),
+  title: project.data.title,
+  description: project.data.description,
+  heroImage: project.data.heroImage,
+  categories: project.data.categories,
+  eyebrow: project.data.categories[0] ?? project.data.tags[0] ?? '',
+  year: project.data.date.getFullYear(),
+  monogram: monogram(project.data.title),
+}));
 ---
 
 <BlogArticle
@@ -34,30 +57,62 @@ function withBase(href: string) {
   headings={headings}
   sidebar={{ enable: false, ...projectIndex.data.sidebar }}
   headerVariant="archive"
-  headerKicker="Project shelf"
+  headerKicker="Selected work"
   contentFont="ui"
 >
   <Content />
 
   {
-    relatedProjects.length > 0 ? (
-      <section class="project-grid" aria-label="Projects">
-        {relatedProjects.map((project) => (
-          <a class="project-card" href={withBase(`/projects/${project.id}/`)}>
-            <span class="project-meta">
-              <FormattedDate date={project.data.date} />
-            </span>
-            <h2>{project.data.title}</h2>
-            <p>{project.data.description}</p>
-            {project.data.tags.length > 0 && (
-              <span class="project-tags" aria-label="Project tags">
-                {project.data.tags.slice(0, 3).map((tag) => (
-                  <small>{tag}</small>
-                ))}
+    cards.length > 0 ? (
+      <section class="project-shelf" aria-label="Projects">
+        {filters.length > 1 && (
+          <div class="shelf-filters" role="group" aria-label="Filter projects by category">
+            <button type="button" class="shelf-filter" data-filter="all" aria-pressed="true">
+              All
+            </button>
+            {filters.map((filter) => (
+              <button type="button" class="shelf-filter" data-filter={filter} aria-pressed="false">
+                {filter}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div class="shelf-grid">
+          {cards.map((card) => (
+            <a class="shelf-card" href={card.href} data-categories={card.categories.join('|')}>
+              <span class="card-media">
+                {card.heroImage ? (
+                  <SmartImage
+                    width={720}
+                    height={450}
+                    src={card.heroImage}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span class="card-monogram" aria-hidden="true">
+                    {card.monogram}
+                  </span>
+                )}
               </span>
-            )}
-          </a>
-        ))}
+
+              <span class="card-body">
+                <span class="card-eyebrow">
+                  {card.eyebrow && <span>{card.eyebrow}</span>}
+                  <span class="card-year">{card.year}</span>
+                </span>
+                <span class="card-title">{card.title}</span>
+                <span class="card-description">{card.description}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <p class="shelf-empty-filter" hidden>
+          Nothing filed under that category yet.
+        </p>
       </section>
     ) : (
       <section class="project-empty" aria-label="Projects empty state">
@@ -72,63 +127,218 @@ function withBase(href: string) {
   }
 </BlogArticle>
 
+<script>
+  const shelf = document.querySelector<HTMLElement>('.project-shelf');
+
+  if (shelf) {
+    const buttons = [...shelf.querySelectorAll<HTMLButtonElement>('.shelf-filter')];
+    const cards = [...shelf.querySelectorAll<HTMLAnchorElement>('.shelf-card')];
+    const emptyNotice = shelf.querySelector<HTMLElement>('.shelf-empty-filter');
+
+    const apply = (active: string) => {
+      let visible = 0;
+
+      for (const card of cards) {
+        const categories = (card.dataset.categories ?? '').split('|').filter(Boolean);
+        const matches = active === 'all' || categories.includes(active);
+
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      }
+
+      for (const button of buttons) {
+        button.setAttribute('aria-pressed', String(button.dataset.filter === active));
+      }
+
+      if (emptyNotice) emptyNotice.hidden = visible > 0;
+    };
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => apply(button.dataset.filter ?? 'all'));
+    }
+  }
+</script>
+
 <style>
-  .project-meta,
-  .project-empty span,
-  .project-tags small {
-    font-family: var(--font-ui-label);
-  }
-
-  .project-card p,
-  .project-empty p {
-    margin: 0;
-    color: var(--paper-ink-soft);
-    line-height: 1.78;
-  }
-
-  .project-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+  .project-shelf {
     margin-top: 34px;
   }
 
-  .project-card,
+  /* Filter bar */
+  .shelf-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 26px;
+  }
+
+  .shelf-filter {
+    padding: 6px 14px;
+    border: 1px solid var(--paper-line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--paper-ink-soft);
+    font-family: var(--font-ui-label);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+      color 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease;
+  }
+
+  .shelf-filter:hover {
+    border-color: var(--paper-line-strong);
+    color: var(--paper-ink);
+  }
+
+  .shelf-filter[aria-pressed='true'] {
+    border-color: transparent;
+    background: var(--paper-ink);
+    color: var(--paper-surface);
+  }
+
+  /* Card grid */
+  .shelf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 34px 26px;
+  }
+
+  .shelf-card {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    color: var(--paper-ink);
+    text-decoration: none;
+  }
+
+  .shelf-card[hidden] {
+    display: none;
+  }
+
+  .card-media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-surface);
+    transition:
+      border-color 220ms ease,
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .card-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 320ms ease;
+  }
+
+  .card-monogram {
+    color: var(--paper-ink-faint);
+    font-family: var(--font-ui-label);
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .shelf-card:hover .card-media {
+    border-color: var(--paper-line-strong);
+    box-shadow: var(--paper-shadow);
+    transform: translateY(-3px);
+  }
+
+  .shelf-card:hover .card-media :global(img) {
+    transform: scale(1.03);
+  }
+
+  .shelf-card:focus-visible {
+    outline: none;
+  }
+
+  .shelf-card:focus-visible .card-media {
+    outline: 2px solid var(--paper-ink);
+    outline-offset: 3px;
+  }
+
+  /* Card text */
+  .card-body {
+    display: grid;
+    gap: 7px;
+  }
+
+  .card-eyebrow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--paper-ink-faint);
+    font-family: var(--font-ui-label);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .card-year::before {
+    margin-right: 8px;
+    content: '·';
+  }
+
+  .card-eyebrow > span:only-child.card-year::before {
+    content: none;
+    margin-right: 0;
+  }
+
+  .card-title {
+    color: var(--paper-ink);
+    font-size: 1.12rem;
+    font-weight: 600;
+    line-height: 1.35;
+    transition: color 180ms ease;
+  }
+
+  .card-description {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--paper-ink-soft);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .shelf-empty-filter {
+    margin: 0;
+    color: var(--paper-ink-soft);
+  }
+
+  /* Empty state */
   .project-empty {
+    display: grid;
+    gap: 10px;
+    max-width: 680px;
+    margin-top: 34px;
+    padding: 24px;
     border: 1px solid var(--paper-line);
     border-radius: 8px;
     background: var(--paper-surface);
     box-shadow: var(--paper-shadow);
   }
 
-  .project-card {
-    display: grid;
-    gap: 12px;
-    min-height: 210px;
-    padding: 22px;
-    color: var(--paper-ink);
-    text-decoration: none;
-    transition:
-      transform 180ms ease,
-      border-color 180ms ease,
-      background 180ms ease;
-  }
-
-  .project-card:hover {
-    border-color: var(--paper-line-strong);
-    background: var(--paper-control-hover);
-    transform: translateY(-1px);
-  }
-
-  .project-meta,
   .project-empty span {
     color: var(--paper-ink-faint);
+    font-family: var(--font-ui-label);
     font-size: 0.76rem;
     font-weight: 600;
     letter-spacing: 0.08em;
   }
 
-  .project-card h2,
   .project-empty h2 {
     margin: 0;
     color: var(--paper-ink);
@@ -136,41 +346,35 @@ function withBase(href: string) {
     line-height: 1.28;
   }
 
-  .project-card p {
-    max-width: 58ch;
-  }
-
-  .project-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-self: end;
-  }
-
-  .project-tags small {
-    padding: 3px 8px;
-    border: 1px solid var(--paper-line);
-    border-radius: 999px;
+  .project-empty p {
+    margin: 0;
     color: var(--paper-ink-soft);
-    font-size: 0.74rem;
-  }
-
-  .project-empty {
-    display: grid;
-    gap: 10px;
-    max-width: 680px;
-    margin-top: 34px;
-    padding: 24px;
+    line-height: 1.78;
   }
 
   @media (max-width: 720px) {
-    .project-grid {
+    .shelf-grid {
       grid-template-columns: 1fr;
+      gap: 30px;
     }
 
-    .project-card,
     .project-empty {
       padding: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-media,
+    .card-media :global(img) {
+      transition: none;
+    }
+
+    .shelf-card:hover .card-media {
+      transform: none;
+    }
+
+    .shelf-card:hover .card-media :global(img) {
+      transform: none;
     }
   }
 </style>
