@@ -46,7 +46,7 @@ drive the filter chips on the projects index — there are no taxonomy pages.
 **Layouts:**
 
 - `src/layouts/Site.astro` — the shell every page uses: `<head>`, the pill nav, the
-  pre-paint theme script, the footer, and the `ContributionGraph`.
+  pre-paint theme script, and the footer.
 - `src/layouts/Article.astro` — long-form pages (blog posts, project write-ups, About):
   title, date, tags, optional hero image, prose styling.
 
@@ -66,6 +66,63 @@ at the top of `base.css`.
 **Code blocks:** Expressive Code, configured in `ec.config.mjs`, which reads `[config.code]`
 from the TOML for themes and styles the blocks with `base.css` tokens.
 
+## Images
+
+**Every image added to the site is converted to WebP first, then filed under `src/assets/`
+in a folder named for where it appears.** No exceptions for convenience — a `.png` or
+`.jpg` dropped straight into the repo is a bug.
+
+```
+src/assets/
+  site-images/          # images that appear on a page, foldered by page
+    homepage/
+    about/
+    projects/           #   the projects *index* page, not a write-up
+  blog-images/
+    <post-slug>/        # folder name == the post filename, e.g. hello-world/
+  project-images/
+    <project-slug>/     # same rule, for src/content/projects/*
+  figure/               # og-card and other one-off/shared figures
+```
+
+Create the leaf folder on demand; only `site-images/` and `figure/` exist today.
+
+**Converting.** `sharp` is already a dependency, so no new tooling:
+
+```sh
+# photos — visually lossless, big savings
+bun -e 'import sharp from "sharp"; const [i,o]=process.argv.slice(-2); \
+  await sharp(i).webp({quality:90,effort:6}).toFile(o)' in.jpg \
+  src/assets/site-images/homepage/hero.webp
+
+# screenshots, UI captures, flat colour, anything with text — keep edges crisp
+bun -e 'import sharp from "sharp"; const [i,o]=process.argv.slice(-2); \
+  await sharp(i).webp({nearLossless:true,quality:100,effort:6}).toFile(o)' in.png \
+  src/assets/blog-images/my-post/step-1.webp
+```
+
+Quality is not negotiable against file size: never resize or upscale during conversion —
+keep the source dimensions and let `astro:assets` emit the responsive widths. Check the
+result before committing; if a screenshot looks soft at `nearLossless`, go
+`{ lossless: true, effort: 6 }`.
+
+**Do not convert:**
+
+- **SVG** — vector stays vector (e.g. `public/favicon.svg`, the favicon source).
+- **`public/` favicons, manifest icons, and the resume PDF** — these need stable URLs and
+  fixed formats, and the favicon PNGs are generated from `favicon.svg`.
+
+**Referencing.** Import from `src/assets/` so Astro hashes and optimises the file — only
+things needing a predictable public URL belong in `public/`. In content frontmatter the
+path is relative to the content file:
+
+```yaml
+heroImage: ../../assets/blog-images/hello-world/cover.webp
+```
+
+In components, use `Img.astro` (it routes imported images through `astro:assets` and lets
+plain string URLs fall through to `<img>`).
+
 ## Deployment
 
 `.github/workflows/deploy-pages.yml` builds with Bun and publishes `dist/` to GitHub Pages
@@ -82,6 +139,7 @@ override the auto-detection unconditionally.
   `.astro` files use `prettier-plugin-astro`. Husky + lint-staged run `format:check` on commit.
 - ESLint flat config sets `deprecation/deprecation: error` — don't use deprecated APIs.
 - Most content changes are `src/content/**` and `site.toml`, not components.
+- Images are WebP under `src/assets/`, foldered by page or post slug — see **Images** above.
 
 ## Current state
 

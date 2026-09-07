@@ -18,11 +18,17 @@
   /* Sun colour on the theme toggle */
   --sun: oklch(79.5% 0.184 86.047);
 
-  /* Contribution scale */
-  --level-1: oklch(92.5% 0.084 155.995);
-  --level-2: oklch(79.2% 0.209 151.711);
-  --level-3: oklch(72.3% 0.219 149.579);
-  --level-4: oklch(39.3% 0.095 152.535);
+  /* Frosted glass. Tint, edge and glow mix from --foreground, so they invert
+     with the theme on their own; the sheen is white in both and only shifts
+     alpha. Used by the hero CTA, nav chips, stack tiles, pills and tabs. */
+  --glass-tint: color-mix(in oklab, var(--foreground) 7%, transparent);
+  --glass-edge: color-mix(in oklab, var(--foreground) 16%, transparent);
+  --glass-glow: color-mix(in oklab, var(--foreground) 20%, transparent);
+  --glass-strong: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --glass-edge-strong: color-mix(in oklab, var(--foreground) 28%, transparent);
+  --glass-sheen: oklch(100% 0 0 / 55%);
+  --glass-top: oklch(100% 0 0 / 20%);
+  --glass-blur: blur(14px) saturate(180%);
 
   /* Radii */
   --radius-sm: 0.375rem;
@@ -94,6 +100,13 @@
   --accent-foreground: oklch(98.5% 0 0);
   --border: oklch(26.9% 0 0);
   --ring: oklch(87% 0 0);
+
+  /* A light tint on a dark ground needs more presence; the white sheen needs
+     far less. Everything else re-derives from the dark --foreground above. */
+  --glass-tint: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --glass-edge: color-mix(in oklab, var(--foreground) 22%, transparent);
+  --glass-sheen: oklch(100% 0 0 / 14%);
+  --glass-top: oklch(100% 0 0 / 8%);
 
   color-scheme: dark;
 }

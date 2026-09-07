@@ -4,9 +4,9 @@
 
 [config.site]
 title = "Ahamed Rasel"
-description = "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate."
+description = "A technical writer who thinks like an engineer — docs for software on 1.47M+ WordPress sites, and the AI agents that keep them honest."
 pageTitle = "Ahamed Rasel — Technical Writer & AI Automation"
-pageDescription = "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate."
+pageDescription = "I make complicated software make sense. Documentation for a WordPress suite on 1.47M+ sites, plus the AI agents and n8n workflows that keep it accurate."
 
 [config.profile]
 name = "Ahamed Rasel"
@@ -17,9 +17,9 @@ location = "Sylhet, Bangladesh · Remote"
 email = "rasel.ahm55@gmail.com"
 github = "https://github.com/ah-rasel5"
 linkedin = "https://www.linkedin.com/in/md-rasel-ahamed-8a4b72195"
-meta = "Docs as a product decision — written sharp, then automated with AI agents & n8n."
-# Placeholder monogram mark — swap for a real photo in public/images/
-avatar = "/images/avatar-placeholder.svg"
+meta = "Ahamed Rasel — Senior Technical Writer at AuthLab. I run docs for a WordPress suite on 1.47M+ sites, and build the AI agents that keep them honest."
+# Resolved against src/assets by index.astro so astro:assets can optimise it.
+avatar = "/src/assets/site-images/homepage/avatar.webp"
 
 # Code block themes. Read by ec.config.mjs at build time.
 [config.code]
@@ -31,38 +31,38 @@ preserveIndent = true
 collapseStyle = "collapsible-auto"
 
 [config.home.intro]
-title = "I'm Ahamed Rasel"
+title = "I make complicated software make sense."
 
 [config.home]
 # Homepage "About" block — one string per paragraph.
 about = [
-  "I started out writing help articles and kept following the thread — into product decisions, into the systems behind them, and eventually into the code that keeps documentation honest.",
-  "Today I run docs for software used by more than a million people, and build the AI agents and n8n workflows that keep a knowledge base that size accurate without a team of ten.",
-  "Outside of work I write about docs-as-product, prompt engineering, and the unglamorous automation that actually holds up.",
+  "I started out writing help articles, which meant every reader arrived already frustrated. That turned out to be the whole job: nobody opens documentation on a good day, and the writing has to work anyway.",
+  "Today I run the knowledge base for a WordPress plugin suite on 1.47M+ sites. Every release quietly ages something already published, and that is a race you lose by hand — so I stopped running it, and built AI agents and n8n workflows that draft, review, and audit the docs as fast as the product ships.",
+  "The rest of my time goes to writing about it: docs as a product decision, prompt engineering that survives production, and the unglamorous automation that actually holds up.",
 ]
 
 # Right column of the "Experience" section.
 skills = [
   "Documentation strategy & information architecture",
-  "Developer-facing API and integration docs",
+  "Developer-facing API & integration docs",
   "Docs-as-code (Git, Markdown, CI review)",
   "AI agent pipelines (Claude, Codex, Google AI Studio)",
   "n8n workflow automation",
   "Knowledge base migration at scale",
-  "Editing & style systems",
+  "Style systems & editorial review",
   "Release notes & changelogs",
 ]
 
 [[config.home.doing]]
-text = "Running an AI agent pipeline — Claude, Codex, and Google AI Studio — that keeps a 1.47M-user knowledge base current"
+text = "Running the AI agent pipeline — Claude, Codex, Google AI Studio — that keeps a 1.47M-site knowledge base current"
 mark = "01"
 
 [[config.home.doing]]
-text = "Orchestrating the full docs lifecycle in n8n, from product changes to review-ready drafts"
+text = "Orchestrating the docs lifecycle end to end in n8n: a product change goes in, a review-ready draft comes out"
 mark = "02"
 
 [[config.home.doing]]
-text = "Writing about docs-as-product, prompt engineering, and practical AI automation"
+text = "Writing about docs as product, prompt engineering, and automation that holds up in production"
 mark = "03"
 
 # "My stack" tiles. `icon` is a name from src/components/Icon.astro.

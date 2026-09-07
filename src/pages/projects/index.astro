@@ -115,24 +115,29 @@ const filters = [...new Set(projects.flatMap((p) => p.data.categories))].sort((a
     align-items: center;
     height: 2.25rem;
     padding-inline: 0.95rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--glass-edge);
     border-radius: var(--radius-full);
-    background: var(--background);
+    background: var(--glass-tint);
+    box-shadow: inset 0 1px 0 var(--glass-sheen);
     color: var(--foreground);
     font-size: 0.85rem;
     cursor: pointer;
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
     transition:
       background 150ms var(--ease),
       border-color 150ms var(--ease);
   }
 
   .tab:hover {
-    background: var(--muted);
+    border-color: var(--glass-edge-strong);
+    background: var(--glass-strong);
   }
 
+  /* the selected filter is the same glass, just held at its hover weight */
   .tab[aria-pressed='true'] {
-    border-color: transparent;
-    background: var(--muted);
+    border-color: var(--glass-edge-strong);
+    background: var(--glass-strong);
   }
 
   .grid {

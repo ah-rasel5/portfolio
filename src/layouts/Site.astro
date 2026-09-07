@@ -4,7 +4,6 @@ import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import type { ImageMetadata } from 'astro';
 import OgCard from '../assets/figure/og-card.png';
-import ContributionGraph from '../components/ContributionGraph.astro';
 import Icon from '../components/Icon.astro';
 import { getSiteConfig } from '../utils/site';
 
@@ -31,7 +30,8 @@ const navItems = [
   { href: '/', icon: 'home', label: 'Home' },
   { href: '/projects', icon: 'gallery', label: 'Projects' },
   { href: '/about', icon: 'user', label: 'Profile' },
-  { href: '/blog', icon: 'pen', label: 'Writing' },
+  { href: '/blog', icon: 'pen', label: 'Blog' },
+  { href: '/contact', icon: 'mail', label: 'Contact' },
 ];
 
 const isActive = (href: string) => {
@@ -185,10 +185,7 @@ const isActive = (href: string) => {
     </main>
 
     <footer class="section-padding container stack site-footer">
-      <ContributionGraph />
-      <div class="footer-contact">
-        <a class="link-underline text-lg" href={`mailto:${profile.email}`}>{profile.email}</a>
-      </div>
+      <p class="footer-copyright muted text-base">&copy; 2026 {profile.name}</p>
     </footer>
 
     <div class="fade" aria-hidden="true"></div>
@@ -241,18 +238,24 @@ const isActive = (href: string) => {
         width: 2.5rem;
         height: 2.5rem;
         padding: 0;
-        border: none;
+        border: 1px solid var(--glass-edge);
         border-radius: var(--radius-full);
-        background: var(--muted);
+        background: var(--glass-tint);
+        box-shadow: inset 0 1px 0 var(--glass-sheen);
         color: var(--foreground);
         font-size: var(--text-sm);
         cursor: pointer;
-        transition: background 150ms var(--ease);
+        -webkit-backdrop-filter: var(--glass-blur);
+        backdrop-filter: var(--glass-blur);
+        transition:
+          background 150ms var(--ease),
+          border-color 150ms var(--ease);
       }
 
       @media (hover: hover) {
         .chip:hover {
-          background: color-mix(in oklab, var(--muted) 75%, transparent);
+          border-color: var(--glass-edge-strong);
+          background: var(--glass-strong);
         }
       }
 
@@ -353,9 +356,8 @@ const isActive = (href: string) => {
         padding-bottom: 4rem;
       }
 
-      .footer-contact {
-        display: flex;
-        justify-content: center;
+      .footer-copyright {
+        text-align: center;
       }
 
       /* ---------- bottom fade ---------- */

@@ -1,0 +1,209 @@
+---
+import Icon from '../components/Icon.astro';
+import Site from '../layouts/Site.astro';
+import { getSiteConfig } from '../utils/site';
+
+const { site, profile } = await getSiteConfig();
+
+const description = 'Get in touch about documentation systems, AI automation, or a docs audit.';
+
+const channels = [
+  {
+    icon: 'mail',
+    label: 'Email',
+    value: profile.email,
+    note: 'Project work, docs audits, and anything that needs a real reply.',
+    href: `mailto:${profile.email}`,
+    external: false,
+  },
+  {
+    icon: 'linkedin',
+    label: 'LinkedIn',
+    value: 'Connect',
+    note: 'Roles, referrals, and the formal version.',
+    href: profile.linkedin,
+    external: true,
+  },
+  {
+    icon: 'github',
+    label: 'GitHub',
+    value: profile.handle,
+    note: 'Code, experiments, and the source of this site.',
+    href: profile.github,
+    external: true,
+  },
+];
+
+const facts = [
+  { term: 'Role', detail: profile.role },
+  { term: 'Company', detail: profile.company },
+  { term: 'Location', detail: profile.location },
+];
+---
+
+<Site title={`Contact | ${site.title}`} description={description}>
+  <section class="hero-padding container head">
+    <h1 class="text-3xl md:text-4xl reveal">Contact</h1>
+    <p class="muted text-lg reveal" style="--reveal-delay:80ms">
+      Email is the fastest way through. Tell me what you're building and what's breaking — I'll tell
+      you straight whether I'm the right person for it.
+    </p>
+  </section>
+
+  <section class="section-padding container pt-0 stack">
+    <ul class="rows surface">
+      {
+        channels.map((channel, i) => (
+          <li class="row reveal" style={`--reveal-delay:${i * 90}ms`}>
+            <a
+              href={channel.href}
+              target={channel.external ? '_blank' : undefined}
+              rel={channel.external ? 'noreferrer' : undefined}
+            >
+              <span class="body">
+                <span class="head-row">
+                  <Icon name={channel.icon} size={18} class="mark" />
+                  <span class="text-lg leading-none title">{channel.label}</span>
+                </span>
+
+                <span class="muted text-base leading-7">{channel.note}</span>
+
+                <span class="text-base value">{channel.value}</span>
+              </span>
+
+              <Icon name={channel.external ? 'external' : 'arrow'} size={20} class="arrow" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <dl class="facts reveal" style="--reveal-delay:270ms">
+      {
+        facts.map((fact) => (
+          <div>
+            <dt class="muted">{fact.term}</dt>
+            <dd>{fact.detail}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+</Site>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* rows — same idiom as PostRow so the contact list reads as one family */
+  .rows {
+    padding: 0;
+    list-style: none;
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--border);
+  }
+
+  .row a {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 2.5rem;
+    border-radius: inherit;
+    transition: background 200ms var(--ease);
+  }
+
+  .row:first-child {
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+  }
+
+  .row:last-child {
+    border-bottom-right-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-lg);
+  }
+
+  @media (hover: hover) {
+    .row a:hover {
+      background: var(--muted);
+    }
+
+    .row a:hover .arrow {
+      transform: translateX(4px);
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .head-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .mark {
+    flex: none;
+    color: var(--muted-foreground);
+  }
+
+  .value {
+    overflow-wrap: anywhere;
+    line-height: 1.5rem;
+    color: var(--muted-foreground);
+  }
+
+  .arrow {
+    flex: none;
+    margin-top: 0.125rem;
+    transition: transform 300ms var(--ease);
+  }
+
+  @media (max-width: 640px) {
+    .row a {
+      gap: 1rem;
+      padding: 1.75rem;
+    }
+  }
+
+  /* facts — the same definition strip the About page uses */
+  .facts {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 640px) {
+    .facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .facts div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  dt {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+</style>

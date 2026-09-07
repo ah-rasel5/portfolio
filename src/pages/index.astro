@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
 import PostRow from '../components/PostRow.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Site from '../layouts/Site.astro';
@@ -10,6 +11,15 @@ import { getProjects, withBase } from '../utils/projects';
 
 const { site, profile, home } = await getSiteConfig();
 
+// profile.avatar is a configured string; a glob is what turns it into a real
+// import so astro:assets can hash and resize it. Falls back to the raw string
+// (a public/ or remote path) when it names nothing under src/assets.
+const siteImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/site-images/**/*.{webp,avif,png,jpg,jpeg}',
+  { eager: true },
+);
+const avatar = siteImages[profile.avatar]?.default ?? profile.avatar;
+
 const projects = (await getProjects()).slice(0, 4);
 const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.draft)).slice(0, 3);
 ---
@@ -18,17 +28,18 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
   {/* ---------- hero ---------- */}
   <section class="hero-padding container stack">
     <div class="avatar reveal">
-      <img src={withBase(profile.avatar)} alt={`${profile.name} avatar`} width="64" height="64" />
+      <Img src={avatar} alt={`${profile.name} avatar`} widths={[64, 128, 192]} sizes="64px" />
     </div>
 
     <div class="intro reveal" style="--reveal-delay:80ms">
       <h1 class="text-3xl md:text-4xl">{home.intro.title}</h1>
-      <p class="muted text-lg leading-none">{profile.meta}</p>
+      <p class="muted text-lg leading-snug">{profile.meta}</p>
     </div>
 
     <div class="reveal" style="--reveal-delay:160ms">
-      <a class="link-underline text-lg leading-none" href={`mailto:${profile.email}`}>
-        {profile.email}
+      <a class="cta" href={withBase('/contact')}>
+        <Icon name="mail" size={18} />
+        Contact
       </a>
     </div>
   </section>
@@ -65,13 +76,13 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
   {
     home.stack.length > 0 && (
       <section class="section-padding bigger-container stack">
-        <h2 class="inner-container text-2xl leading-none">My stack</h2>
+        <h2 class="inner-container text-2xl leading-none">Stack</h2>
 
         <ul class="tiles">
           {home.stack.map((item) => (
-            <li class="tile" title={item.name} style={item.color && `--brand: ${item.color}`}>
+            <li class="tile" style={item.color && `--brand: ${item.color}`}>
               <Icon name={item.icon} size={36} />
-              <span class="sr-only">{item.name}</span>
+              <span class="tile-label">{item.name}</span>
             </li>
           ))}
         </ul>
@@ -150,12 +161,12 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
     )
   }
 
-  {/* ---------- latest writing ---------- */}
+  {/* ---------- blog ---------- */}
   {
     posts.length > 0 && (
       <section class="section-padding bigger-container stack">
         <div class="inner-container block-head">
-          <h2 class="text-2xl leading-none">Latest writing</h2>
+          <h2 class="text-2xl leading-none">Blog</h2>
           <a class="link-underline text-lg" href={withBase('/blog')}>
             Read all
           </a>
@@ -177,6 +188,19 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
   }
 </Site>
 
+<script>
+  // Feeds the CTA's specular gradient the pointer position.
+  const cta = document.querySelector('.cta');
+
+  if (cta && window.matchMedia('(hover: hover)').matches) {
+    cta.addEventListener('pointermove', (event) => {
+      const rect = cta.getBoundingClientRect();
+      cta.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      cta.style.setProperty('--my', `${event.clientY - rect.top}px`);
+    });
+  }
+</script>
+
 <style>
   .avatar {
     position: relative;
@@ -192,6 +216,88 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
     height: 100%;
     border-radius: var(--radius-full);
     object-fit: cover;
+  }
+
+  /* Frosted-glass CTA. Tokens live in base.css so the nav, tiles and tabs
+     share one definition of "glass". */
+  .cta {
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    overflow: hidden;
+    height: 2.875rem;
+    padding-inline: 1.5rem;
+    border: 1px solid var(--glass-edge);
+    border-radius: var(--radius-full);
+    background: var(--glass-tint);
+    box-shadow:
+      0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
+      0 10px 26px -14px color-mix(in oklab, var(--foreground) 40%, transparent),
+      inset 0 1px 0 var(--glass-sheen);
+    color: var(--foreground);
+    font-size: var(--text-base);
+    line-height: 1;
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    transition:
+      background 200ms var(--ease),
+      border-color 200ms var(--ease),
+      box-shadow 300ms var(--ease),
+      transform 200ms var(--ease);
+  }
+
+  /* the fluid part — a specular pool that tracks the pointer */
+  .cta::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: radial-gradient(
+      5rem circle at var(--mx, 50%) var(--my, 50%),
+      var(--glass-glow),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 250ms var(--ease);
+  }
+
+  /* fixed top-down sheen, so it still reads as glass with no pointer at all */
+  .cta::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(to bottom, var(--glass-top), transparent 55%);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .cta:hover {
+      border-color: var(--glass-edge-strong);
+      background: var(--glass-strong);
+      box-shadow:
+        0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent),
+        0 16px 34px -14px color-mix(in oklab, var(--foreground) 45%, transparent),
+        inset 0 1px 0 var(--glass-sheen);
+      transform: translateY(-1px);
+    }
+
+    .cta:hover::before {
+      opacity: 1;
+    }
+  }
+
+  .cta:active {
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta,
+    .cta:hover {
+      transform: none;
+    }
   }
 
   .intro {
@@ -226,6 +332,7 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
     display: flex;
     flex-wrap: wrap;
     gap: 1.0625rem;
+    margin-top: 3.75rem;
     align-items: center;
     padding: 0;
     list-style: none;
@@ -238,31 +345,83 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
   }
 
   .tile {
+    position: relative;
     display: flex;
     flex: none;
     align-items: center;
     justify-content: center;
     width: 6.25rem;
     height: 6.25rem;
+    border: 1px solid var(--glass-edge);
     border-radius: var(--radius-lg);
-    background: var(--muted);
+    background: var(--glass-tint);
+    box-shadow: inset 0 1px 0 var(--glass-sheen);
     color: var(--muted-foreground);
-    transition: color 300ms var(--ease);
+    transform-origin: center bottom;
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    transition:
+      color 300ms var(--ease),
+      background 300ms var(--ease),
+      border-color 300ms var(--ease),
+      transform 260ms var(--ease);
+  }
+
+  /* Dock label. Kept in the DOM at opacity 0 so it still reads out to
+     screen readers — it replaces the old .sr-only span. */
+  .tile-label {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    z-index: 3;
+    transform: translate(-50%, 0.25rem);
+    padding: 0.3125rem 0.6875rem;
+    border: 1px solid var(--glass-edge);
+    border-radius: var(--radius-full);
+    background: color-mix(in oklab, var(--card) 88%, transparent);
+    box-shadow:
+      var(--shadow-xs),
+      inset 0 1px 0 var(--glass-sheen);
+    color: var(--foreground);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-lh);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 200ms var(--ease),
+      transform 200ms var(--ease);
   }
 
   @media (hover: hover) {
     .tile:hover {
+      z-index: 2;
+      border-color: var(--glass-edge-strong);
+      background: var(--glass-strong);
       color: var(--brand, var(--foreground));
+      transform: scale(1.14);
+    }
+
+    /* Dock falloff — the tiles either side of the hovered one lift a little. */
+    .tiles .tile:hover + .tile,
+    .tiles .tile:has(+ .tile:hover) {
+      transform: scale(1.06);
+    }
+
+    .tile:hover .tile-label {
+      transform: translate(-50%, 0);
+      opacity: 1;
     }
   }
 
-  .sr-only {
-    position: absolute;
-    overflow: hidden;
-    clip-path: inset(50%);
-    width: 1px;
-    height: 1px;
-    white-space: nowrap;
+  @media (prefers-reduced-motion: reduce) {
+    .tile:hover,
+    .tiles .tile:hover + .tile,
+    .tiles .tile:has(+ .tile:hover) {
+      transform: none;
+    }
   }
 
   /* about */
@@ -329,7 +488,7 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
     flex: none;
   }
 
-  /* latest writing */
+  /* blog */
   .rows {
     padding: 0;
     list-style: none;

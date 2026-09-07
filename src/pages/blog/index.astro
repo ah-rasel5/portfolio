@@ -10,9 +10,9 @@ const { site } = await getSiteConfig();
 const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.draft));
 ---
 
-<Site title={`Writing | ${site.title}`} description={site.description}>
+<Site title={`Blog | ${site.title}`} description={site.description}>
   <section class="hero-padding container head">
-    <h1 class="text-3xl md:text-4xl">Writing &amp; notes</h1>
+    <h1 class="text-3xl md:text-4xl">Blog</h1>
     <p class="muted text-lg">
       Documentation systems, AI automation, and what I learn building them.
     </p>
