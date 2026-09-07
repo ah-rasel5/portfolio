@@ -1,163 +1,92 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
-
-function withBase(href: string) {
-  if (href === '/') {
-    return `${basePath}/` || '/';
-  }
-
-  return `${basePath}${href.startsWith('/') ? href : `/${href}`}`;
-}
+import Site from '../layouts/Site.astro';
+import { withBase } from '../utils/projects';
 ---
 
-<BaseLayout
+<Site
   title="404 Not Found"
   description="This page isn't here — it may have moved, or it may not be written yet."
 >
-  <div class="publication-bg" aria-hidden="true"></div>
-  <main class="not-found-shell" aria-labelledby="not-found-title">
-    <section class="not-found-panel">
-      <p class="not-found-kicker">404 Not Found</p>
-      <h1 id="not-found-title">This page isn't written yet.</h1>
-      <p class="not-found-copy">
+  <section class="shell">
+    <div class="container panel">
+      <p class="muted kicker">404</p>
+      <h1>This page isn't written yet.</h1>
+      <p class="muted copy">
         The link may have moved, or this may be a path that never existed. Either way, the way back
         is easy.
       </p>
-      <nav class="not-found-actions" aria-label="404 page links">
-        <a class="primary-link" href={withBase('/')}>Back to home</a>
-        <a href={withBase('/blog')}>Read the blog</a>
-      </nav>
-    </section>
-  </main>
-</BaseLayout>
+      <div class="actions">
+        <a class="pill primary" href={withBase('/')}>Back to home</a>
+        <a class="pill" href={withBase('/blog')}>Read the blog</a>
+      </div>
+    </div>
+  </section>
+</Site>
 
 <style>
-  .not-found-shell {
+  .shell {
     display: grid;
-    min-height: calc(100vh - 56px);
     place-items: center;
-    padding-top: 116px;
-    padding-bottom: 72px;
+    min-height: 60vh;
+    padding-block: clamp(3rem, 10vw, 6rem);
   }
 
-  .not-found-panel {
-    width: min(100%, 860px);
-    padding: clamp(22px, 5vw, 56px) clamp(6px, 3vw, 18px);
-    animation: not-found-in 420ms ease both;
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 34rem;
   }
 
-  .not-found-kicker {
-    margin: 0 0 12px;
-    color: var(--paper-accent);
-    font-family: var(--font-ui-label);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    line-height: 1.2;
-    text-transform: uppercase;
+  .kicker {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
   }
 
   h1 {
-    max-width: 11em;
-    margin: 0;
-    color: var(--paper-ink);
-    font-size: clamp(2.3rem, 7vw, 4.6rem);
-    line-height: 1.08;
+    font-size: clamp(2rem, 6vw, 3rem);
   }
 
-  .not-found-copy {
-    max-width: 42rem;
-    margin: 24px 0 0;
-    color: var(--paper-ink-soft);
-    font-size: 1.04rem;
-    line-height: 1.86;
+  .copy {
+    font-size: 1.05rem;
+    line-height: 1.65;
   }
 
-  .not-found-actions {
+  .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 30px;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
   }
 
-  .not-found-actions a {
+  .pill {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-height: 42px;
-    padding: 8px 14px;
-    border: 1px solid var(--paper-line);
-    border-radius: 8px;
-    background: var(--paper-control);
-    color: var(--paper-ink);
-    font-family: var(--font-ui-label);
-    font-size: 0.88rem;
-    font-weight: 700;
-    line-height: 1.2;
-    text-decoration: none;
+    height: 2.4rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
     transition:
-      transform 180ms ease,
-      border-color 180ms ease,
-      background 180ms ease,
-      color 180ms ease;
+      background 150ms var(--ease),
+      color 150ms var(--ease);
   }
 
-  .not-found-actions a:hover,
-  .not-found-actions a:focus-visible {
-    border-color: var(--paper-line-strong);
-    background: var(--paper-control-hover);
-    color: var(--paper-accent);
-    transform: translateY(-1px);
+  .pill:hover {
+    background: var(--accent);
+    color: var(--foreground);
   }
 
-  .not-found-actions a:focus-visible {
-    outline: 2px solid var(--paper-accent);
-    outline-offset: 3px;
+  .primary {
+    border-color: transparent;
+    background: var(--foreground);
+    color: var(--background);
   }
 
-  .not-found-actions .primary-link {
-    border-color: color-mix(in srgb, var(--paper-accent) 24%, var(--paper-line));
-  }
-
-  @keyframes not-found-in {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (max-width: 720px) {
-    .not-found-shell {
-      min-height: 100vh;
-      padding-top: 92px;
-      padding-bottom: 42px;
-    }
-
-    .not-found-panel {
-      padding: 24px 0;
-    }
-
-    h1 {
-      max-width: 8em;
-      font-size: 2.34rem;
-    }
-
-    .not-found-copy {
-      margin-top: 18px;
-      font-size: 0.98rem;
-    }
-
-    .not-found-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      margin-top: 24px;
-    }
+  .primary:hover {
+    background: var(--foreground);
+    color: var(--background);
+    opacity: 0.88;
   }
 </style>

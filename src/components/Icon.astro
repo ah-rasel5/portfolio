@@ -1,5 +1,6 @@
 ---
 import {
+  ArrowRight,
   BookOpen,
   BriefcaseBusiness,
   Building2,
@@ -8,22 +9,28 @@ import {
   Compass,
   ExternalLink,
   FolderOpen,
+  GalleryVerticalEnd,
   Gem,
   GitBranch,
   GitCommitHorizontal,
   Github,
+  House,
   Layers3,
   Linkedin,
   Link2,
   Mail,
   MapPin,
   MessageCircle,
+  Moon,
   PenLine,
+  Pin,
   BookMarked,
   Sparkles,
   Star,
+  Sun,
   Twitter,
   Tv,
+  User,
   type Props as LucideProps,
 } from 'lucide-astro';
 
@@ -36,10 +43,16 @@ interface Props extends Omit<LucideProps, 'name'> {
 const { name, size = 20, class: className, style, ...attrs } = Astro.props;
 
 const icons = {
+  arrow: ArrowRight,
   bilibili: Tv,
   book: BookOpen,
   branch: GitBranch,
   briefcase: BriefcaseBusiness,
+  home: House,
+  moon: Moon,
+  pin: Pin,
+  sun: Sun,
+  user: User,
   building: Building2,
   calendar: CalendarDays,
   clock: Clock3,
@@ -47,6 +60,7 @@ const icons = {
   compass: Compass,
   external: ExternalLink,
   folder: FolderOpen,
+  gallery: GalleryVerticalEnd,
   github: Github,
   juejin: Gem,
   layers: Layers3,
@@ -70,7 +84,7 @@ const iconStyle = `--icon-size: ${iconSize};${style ? ` ${style}` : ''}`;
 <IconComponent
   {...attrs}
   size={size}
-  stroke-width={attrs['stroke-width'] ?? 1.9}
+  stroke-width={attrs['stroke-width'] ?? 2}
   aria-hidden={attrs['aria-hidden'] ?? 'true'}
   focusable={attrs.focusable ?? 'false'}
   style={iconStyle}

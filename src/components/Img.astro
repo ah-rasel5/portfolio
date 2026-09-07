@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+import type { HTMLAttributes } from 'astro/types';
+
+/**
+ * Imported images go through Astro's optimizer; remote/absolute URLs are strings
+ * it cannot process, so those fall through to a plain <img>.
+ */
+interface Props extends Omit<HTMLAttributes<'img'>, 'src'> {
+  src: ImageMetadata | string;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+}
+
+const { src, alt, widths, sizes, ...rest } = Astro.props;
+---
+
+{
+  typeof src === 'string' ? (
+    <img src={src} alt={alt} sizes={sizes} loading="lazy" decoding="async" {...rest} />
+  ) : (
+    <Image src={src} alt={alt} widths={widths} sizes={sizes} loading="lazy" {...rest} />
+  )
+}

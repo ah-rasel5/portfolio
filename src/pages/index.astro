@@ -1,44 +1,337 @@
 ---
-import IntroCard from '../components/cards/IntroCard.astro';
-import NavigationCard from '../components/cards/NavigationCard.astro';
-import ProfileCard from '../components/cards/ProfileCard.astro';
-import DashboardFlow from '../components/layout/DashboardFlow.astro';
-import BlogHeatmap from '../components/widgets/BlogHeatmap.astro';
-import DoingCard from '../components/widgets/DoingCard.astro';
-import { getSiteConfig } from '../data/site';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import Icon from '../components/Icon.astro';
+import PostRow from '../components/PostRow.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Site from '../layouts/Site.astro';
+import { getSiteConfig } from '../utils/site';
+import { sortByDateDesc } from '../utils/content';
+import { getProjects, withBase } from '../utils/projects';
 
-const { home, profile, site } = await getSiteConfig();
+const { site, profile, home } = await getSiteConfig();
+
+const projects = (await getProjects()).slice(0, 4);
+const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.draft)).slice(0, 3);
 ---
 
-<BaseLayout title={site.pageTitle} description={site.pageDescription}>
-  <div class="publication-bg" aria-hidden="true"></div>
-  <DashboardFlow>
-    <Fragment slot="profile">
-      <ProfileCard profile={profile} />
-    </Fragment>
+<Site title={site.pageTitle} description={site.pageDescription}>
+  {/* ---------- hero ---------- */}
+  <section class="hero-padding container stack">
+    <div class="avatar reveal">
+      <img src={withBase(profile.avatar)} alt={`${profile.name} avatar`} width="64" height="64" />
+    </div>
 
-    <Fragment slot="hero">
-      <IntroCard intro={home.intro} quote={home.quote} />
-    </Fragment>
+    <div class="intro reveal" style="--reveal-delay:80ms">
+      <h1 class="text-3xl md:text-4xl">{home.intro.title}</h1>
+      <p class="muted text-lg leading-none">{profile.meta}</p>
+    </div>
 
-    <Fragment slot="activity">
-      <BlogHeatmap
-        weeks={home.latest.heatmapWeeks}
-        showLatest={home.latest.showHeatmapLatest}
-        latestCount={home.latest.count}
-        excludeDraft={home.latest.excludeDraft}
-        startDate={home.latest.startDate || null}
-        dateArchiveBaseHref={home.latest.dateArchiveBaseHref || undefined}
-      />
-    </Fragment>
+    <div class="reveal" style="--reveal-delay:160ms">
+      <a class="link-underline text-lg leading-none" href={`mailto:${profile.email}`}>
+        {profile.email}
+      </a>
+    </div>
+  </section>
 
-    <Fragment slot="links">
-      <NavigationCard items={home.navigation} />
-    </Fragment>
+  {/* ---------- selected work ---------- */}
+  {
+    projects.length > 0 && (
+      <section class="section-padding bigger-container stack pt-0">
+        <div class="inner-container block-head">
+          <h2 class="text-2xl leading-none">Selected work</h2>
+          <a class="link-underline text-lg leading-none" href={withBase('/projects')}>
+            View all
+          </a>
+        </div>
 
-    <Fragment slot="recently">
-      <DoingCard items={home.doing} />
-    </Fragment>
-  </DashboardFlow>
-</BaseLayout>
+        <ul class="card-grid">
+          {projects.map((p, i) => (
+            <li class="reveal-scale" style={`--reveal-delay:${i * 90}ms`}>
+              <ProjectCard
+                href={withBase(`/projects/${p.id}/`)}
+                title={p.data.title}
+                description={p.data.description}
+                heroImage={p.data.heroImage}
+                categories={p.data.categories}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {/* ---------- my stack ---------- */}
+  {
+    home.stack.length > 0 && (
+      <section class="section-padding bigger-container stack">
+        <h2 class="inner-container text-2xl leading-none">My stack</h2>
+
+        <ul class="tiles">
+          {home.stack.map((item) => (
+            <li class="tile" title={item.name} style={item.color && `--brand: ${item.color}`}>
+              <Icon name={item.icon} size={36} />
+              <span class="sr-only">{item.name}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {/* ---------- about ---------- */}
+  {
+    home.about.length > 0 && (
+      <section class="section-padding bigger-container stack about-section">
+        <div class="inner-container stack">
+          <h2 class="text-2xl leading-none">About</h2>
+          <div class="muted text-lg about-copy">
+            {home.about.map((para) => (
+              <p>{para}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {/* ---------- experience ---------- */}
+  {
+    home.experience.length > 0 && (
+      <section class="section-padding container stack">
+        <h2 class="text-2xl leading-none">Experience</h2>
+
+        <div class="two-col">
+          <ul class="roles">
+            {home.experience.map((job) => (
+              <li class="text-lg leading-none">
+                {job.href ? (
+                  <a class="link-underline" href={job.href} target="_blank" rel="noreferrer">
+                    {job.company}
+                  </a>
+                ) : (
+                  <span>{job.company}</span>
+                )}
+                <p class="muted">{job.role}</p>
+                <p class="muted">{job.period}</p>
+              </li>
+            ))}
+          </ul>
+
+          {home.skills.length > 0 && (
+            <div>
+              <p class="text-lg leading-none skills-head">Skills</p>
+              <ul class="skills">
+                {home.skills.map((skill) => (
+                  <li class="muted text-lg">{skill}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {/* ---------- currently ---------- */}
+  {
+    home.doing.length > 0 && (
+      <section class="section-padding container stack">
+        <h2 class="text-2xl leading-none">Currently</h2>
+        <ul class="doing">
+          {home.doing.map((item) => (
+            <li class="text-lg">
+              <span class="muted text-base doing-mark">{item.mark}</span>
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {/* ---------- latest writing ---------- */}
+  {
+    posts.length > 0 && (
+      <section class="section-padding bigger-container stack">
+        <div class="inner-container block-head">
+          <h2 class="text-2xl leading-none">Latest writing</h2>
+          <a class="link-underline text-lg" href={withBase('/blog')}>
+            Read all
+          </a>
+        </div>
+
+        <ul class="rows surface">
+          {posts.map((post, i) => (
+            <PostRow
+              href={withBase(`/blog/${post.id}/`)}
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date}
+              delay={i * 80}
+            />
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</Site>
+
+<style>
+  .avatar {
+    position: relative;
+    overflow: hidden;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-full);
+    background: var(--muted);
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .block-head {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* selected work */
+  .card-grid {
+    display: grid;
+    gap: 2.5rem 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* my stack */
+  .tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.0625rem;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 1024px) {
+    .tiles {
+      justify-content: space-between;
+    }
+  }
+
+  .tile {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 6.25rem;
+    height: 6.25rem;
+    border-radius: var(--radius-lg);
+    background: var(--muted);
+    color: var(--muted-foreground);
+    transition: color 300ms var(--ease);
+  }
+
+  @media (hover: hover) {
+    .tile:hover {
+      color: var(--brand, var(--foreground));
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    overflow: hidden;
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    white-space: nowrap;
+  }
+
+  /* about */
+  .about-copy > * + * {
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .about-copy > * + * {
+      margin-top: 2.75rem;
+    }
+  }
+
+  /* experience */
+  .two-col {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .two-col {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .roles,
+  .skills {
+    padding: 0;
+    list-style: none;
+  }
+
+  .roles > li + li {
+    margin-top: 2.5rem;
+  }
+
+  .roles p {
+    margin-top: 1rem;
+  }
+
+  .skills-head {
+    margin-bottom: 1rem;
+  }
+
+  .skills > li + li {
+    margin-top: 1rem;
+  }
+
+  /* currently */
+  .doing {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .doing li {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .doing-mark {
+    flex: none;
+  }
+
+  /* latest writing */
+  .rows {
+    padding: 0;
+    list-style: none;
+  }
+</style>

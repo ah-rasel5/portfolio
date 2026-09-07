@@ -1,52 +1,49 @@
 // @ts-check
 
-import fs from 'node:fs';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import { defineConfig } from 'astro/config';
-import rehypeKatex from 'rehype-katex';
-import rehypeMathjax from 'rehype-mathjax';
-import remarkMath from 'remark-math';
-import { parse } from 'smol-toml';
-
 import tailwindcss from '@tailwindcss/vite';
-
+import { defineConfig, fontProviders } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
 
-const siteToml = parse(fs.readFileSync(new URL('./src/config/site.toml', import.meta.url), 'utf8'));
-const configuredMathRenderer = siteToml.config?.math?.render;
-const mathRenderer = configuredMathRenderer === 'mathjax' ? 'mathjax' : 'katex';
+/**
+ * Where the site is served from.
+ *
+ * Locally this is just `/`. On GitHub Actions the owner/repo env vars are read
+ * to work out whether this is a user page (`owner.github.io`) or a project page
+ * (`owner.github.io/repo`, which needs a base path). `SITE_URL` / `SITE_BASE`
+ * override both unconditionally — that is the hook for a custom domain.
+ */
+const onGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+const owner = process.env.GITHUB_REPOSITORY_OWNER;
+const repo = process.env.GITHUB_REPOSITORY?.split('/')[1];
+const isProjectPage = Boolean(owner && repo && repo !== `${owner}.github.io`);
 
-const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
-const customSite = process.env.SITE_URL;
-const customBase = process.env.SITE_BASE;
-const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER;
-const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1];
-const isProjectPage =
-  Boolean(repositoryOwner) &&
-  Boolean(repositoryName) &&
-  repositoryName !== `${repositoryOwner}.github.io`;
+const inferredSite =
+  onGitHubActions && owner && repo
+    ? `https://${owner}.github.io${isProjectPage ? `/${repo}` : ''}`
+    : 'http://localhost:4321';
 
-const githubPagesSite =
-  repositoryOwner && repositoryName
-    ? `https://${repositoryOwner}.github.io${isProjectPage ? `/${repositoryName}` : ''}`
-    : undefined;
-
-const resolvedSite =
-  customSite || (isGitHubActions && githubPagesSite ? githubPagesSite : 'https://example.com');
-
-const resolvedBase =
-  customBase || (isGitHubActions && isProjectPage && repositoryName ? `/${repositoryName}` : '/');
+const site = process.env.SITE_URL || inferredSite;
+const base = process.env.SITE_BASE || (onGitHubActions && isProjectPage ? `/${repo}` : '/');
 
 // https://astro.build/config
 export default defineConfig({
-  site: resolvedSite,
-  base: resolvedBase,
-  markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [mathRenderer === 'mathjax' ? rehypeMathjax : rehypeKatex],
-  },
+  site,
+  base,
   integrations: [expressiveCode(), mdx(), sitemap()],
+
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: 'Funnel Sans',
+      cssVariable: '--font-sans',
+      weights: [400, 500, 600, 700],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+    },
+  ],
 
   vite: {
     plugins: [tailwindcss()],

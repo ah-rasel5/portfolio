@@ -1,0 +1,132 @@
+---
+import type { ImageMetadata } from 'astro';
+import PostDate from '../components/PostDate.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import Site from './Site.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  heroImage?: ImageMetadata | string;
+  showHeroImage?: boolean;
+  tags?: string[];
+  backHref: string;
+  backLabel: string;
+}
+
+const {
+  title,
+  description,
+  date,
+  heroImage,
+  showHeroImage = true,
+  tags = [],
+  backHref,
+  backLabel,
+} = Astro.props;
+---
+
+<Site title={title} description={description} image={heroImage}>
+  <article class="article">
+    <div class="container narrow">
+      <a class="back" href={backHref}>
+        <Icon name="branch" size={14} />
+        {backLabel}
+      </a>
+
+      <header class="head">
+        <h1>{title}</h1>
+        <p class="muted description">{description}</p>
+        <p class="muted meta">
+          <PostDate date={date} />
+          {
+            tags.length > 0 && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{tags.join(', ')}</span>
+              </>
+            )
+          }
+        </p>
+      </header>
+
+      {
+        showHeroImage && heroImage && (
+          <figure class="hero">
+            <Img width={1200} height={675} src={heroImage} alt="" />
+          </figure>
+        )
+      }
+
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+  </article>
+</Site>
+
+<style>
+  .article {
+    padding-block: clamp(2.5rem, 7vw, 4.5rem);
+  }
+
+  .narrow {
+    max-width: 44rem;
+  }
+
+  .back {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    transition: color 150ms var(--ease);
+  }
+
+  .back:hover {
+    color: var(--foreground);
+  }
+
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-size: clamp(1.875rem, 5vw, 2.5rem);
+  }
+
+  .description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  .meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+
+  .hero {
+    margin: 2.5rem 0 0;
+  }
+
+  .hero :global(img) {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    object-fit: cover;
+  }
+
+  .prose {
+    margin-top: 2.5rem;
+  }
+</style>

@@ -1,71 +1,12 @@
+# Site configuration. Every key here is validated by src/content.config.ts and
+# read somewhere in src/ — if you add a key, wire it up in both places or the
+# build will reject it.
+
 [config.site]
 title = "Ahamed Rasel"
 description = "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate."
 pageTitle = "Ahamed Rasel — Technical Writer & AI Automation"
 pageDescription = "Technical writer who thinks like an engineer — turning million-user software into clear docs, and building the AI agents and n8n workflows that keep it accurate."
-repository = "https://github.com/ah-rasel5/portfolio"
-footerNote = "© Ahamed Rasel"
-
-[config.vibe]
-showTrail = true
-
-[config.theme]
-# Available palettes:
-# green-soft, green-vivid, rose-soft, pink-soft, purple-soft, blue-soft, orange-soft, brown-soft
-palette = "blue-soft"
-
-[config.code]
-lightTheme = "catppuccin-latte"
-darkTheme = "catppuccin-macchiato"
-lineNumbers = true
-wrap = true
-preserveIndent = true
-collapseStyle = "collapsible-auto"
-
-[config.math]
-render = "katex" # "katex" | "mathjax"
-
-[config.comments]
-enabled = false
-provider = "none"
-show_on_posts = true
-
-[config.search]
-enabled = true
-shortcut = "mod+k"
-placeholder = "Search..."
-maxResults = 6
-
-[config.blog]
-postsPerPage = 6
-
-[config.comments.giscus]
-repo = ""
-repo_id = ""
-category = ""
-category_id = ""
-mapping = "pathname"
-strict = "0"
-reactions_enabled = "1"
-emit_metadata = "0"
-input_position = "top"
-light_theme = "light"
-dark_theme = "dark"
-lang = "en"
-loading = "lazy"
-
-[config.comments.utterances]
-repo = ""
-issue_term = "pathname"
-label = "comment"
-theme = "github-light"
-
-[config.comments.waline]
-server_url = ""
-lang = "en"
-dark = "html.dark"
-pageview = true
-comment = true
 
 [config.profile]
 name = "Ahamed Rasel"
@@ -74,108 +15,43 @@ role = "Senior Technical Writer"
 company = "AuthLab · WPManageNinja"
 location = "Sylhet, Bangladesh · Remote"
 email = "rasel.ahm55@gmail.com"
-website = "https://ahamedrasel.com"
 github = "https://github.com/ah-rasel5"
+linkedin = "https://www.linkedin.com/in/md-rasel-ahamed-8a4b72195"
 meta = "Docs as a product decision — written sharp, then automated with AI agents & n8n."
-# Placeholder monogram mark — swap for your own photo/logo in public/images/
+# Placeholder monogram mark — swap for a real photo in public/images/
 avatar = "/images/avatar-placeholder.svg"
 
-[[config.topNav.links]]
-label = "Home"
-href = "/"
-
-[[config.topNav.links]]
-label = "Blog"
-href = "/blog"
-
-[[config.topNav.links]]
-label = "Projects"
-href = "/projects"
-
-[[config.topNav.links]]
-label = "Vibe"
-href = "/vibe"
-
-[[config.topNav.links]]
-label = "About"
-href = "/about"
-
-[config.home]
-layout = "grid"
-
-[config.home.quote]
-text = [
-  "Good documentation is a product decision,",
-  "not an afterthought.",
-  "Clear enough to finish, accurate enough to rely on.",
-]
-image = "/images/mark.svg"
+# Code block themes. Read by ec.config.mjs at build time.
+[config.code]
+lightTheme = "catppuccin-latte"
+darkTheme = "catppuccin-macchiato"
+lineNumbers = true
+wrap = true
+preserveIndent = true
+collapseStyle = "collapsible-auto"
 
 [config.home.intro]
 title = "I'm Ahamed Rasel"
-name = "Ahamed Rasel"
-body = [
-  "I'm a technical writer who thinks like an engineer.",
-  "I turn million-user complexity into docs people actually finish — and build the AI and n8n systems that keep them that way long after I hit publish.",
+
+[config.home]
+# Homepage "About" block — one string per paragraph.
+about = [
+  "I started out writing help articles and kept following the thread — into product decisions, into the systems behind them, and eventually into the code that keeps documentation honest.",
+  "Today I run docs for software used by more than a million people, and build the AI agents and n8n workflows that keep a knowledge base that size accurate without a team of ten.",
+  "Outside of work I write about docs-as-product, prompt engineering, and the unglamorous automation that actually holds up.",
 ]
-image = "/images/avatar-placeholder.svg"
 
-[config.home.latest]
-count = 1
-heatmapWeeks = 24
-showHeatmapLatest = true
-excludeDraft = true
-startDate = ""
-dateArchiveBaseHref = ""
-
-[[config.home.navigation]]
-icon = "pen"
-title = "Blog"
-subtitle = "Notes on docs & AI"
-href = "/blog"
-
-[[config.home.navigation]]
-icon = "compass"
-title = "Projects"
-subtitle = "Systems I've shipped"
-href = "/projects"
-
-[[config.home.navigation]]
-icon = "briefcase"
-title = "Résumé"
-subtitle = "Experience & story"
-href = "/about"
-
-[[config.home.navigation]]
-icon = "github"
-title = "Open Source"
-subtitle = "Code & experiments"
-href = "https://github.com/ah-rasel5"
-
-[[config.home.connect]]
-label = "GitHub"
-href = "https://github.com/ah-rasel5"
-icon = "github"
-
-[[config.home.connect]]
-label = "LinkedIn"
-href = "https://www.linkedin.com/in/md-rasel-ahamed-8a4b72195"
-icon = "linkedin"
-
-[[config.home.connect]]
-label = "Blog"
-href = "/blog"
-icon = "book"
-
-[[config.home.connect]]
-label = "Projects"
-href = "/projects"
-icon = "repo"
-
-[[config.home.connect]]
-label = "Email"
-href = "mailto:rasel.ahm55@gmail.com"
-icon = "mail"
+# Right column of the "Experience" section.
+skills = [
+  "Documentation strategy & information architecture",
+  "Developer-facing API and integration docs",
+  "Docs-as-code (Git, Markdown, CI review)",
+  "AI agent pipelines (Claude, Codex, Google AI Studio)",
+  "n8n workflow automation",
+  "Knowledge base migration at scale",
+  "Editing & style systems",
+  "Release notes & changelogs",
+]
 
 [[config.home.doing]]
 text = "Running an AI agent pipeline — Claude, Codex, and Google AI Studio — that keeps a 1.47M-user knowledge base current"
@@ -188,3 +64,49 @@ mark = "02"
 [[config.home.doing]]
 text = "Writing about docs-as-product, prompt engineering, and practical AI automation"
 mark = "03"
+
+# "My stack" tiles. `icon` is a name from src/components/Icon.astro.
+[[config.home.stack]]
+name = "Claude"
+icon = "sparkle"
+color = "#D97757"
+
+[[config.home.stack]]
+name = "n8n"
+icon = "branch"
+color = "#EA4B71"
+
+[[config.home.stack]]
+name = "Markdown"
+icon = "pen"
+
+[[config.home.stack]]
+name = "Git"
+icon = "commit"
+color = "#F05032"
+
+[[config.home.stack]]
+name = "Astro"
+icon = "layers"
+color = "#BC52EE"
+
+[[config.home.stack]]
+name = "VitePress"
+icon = "book"
+color = "#5468FF"
+
+[[config.home.stack]]
+name = "WordPress"
+icon = "compass"
+color = "#21759B"
+
+[[config.home.stack]]
+name = "GitHub"
+icon = "github"
+
+# TODO: add earlier roles — only the current one is filled in.
+[[config.home.experience]]
+company = "AuthLab · WPManageNinja"
+href = "https://wpmanageninja.com"
+role = "Senior Technical Writer"
+period = "Present"

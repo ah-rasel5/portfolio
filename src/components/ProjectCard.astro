@@ -1,0 +1,103 @@
+---
+import type { ImageMetadata } from 'astro';
+import Img from './Img.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  heroImage?: ImageMetadata | string;
+  categories?: string[];
+}
+
+const { href, title, description, heroImage, categories = [] } = Astro.props;
+
+const words = title.split(/[\s–—-]+/).filter(Boolean);
+const monogram = (
+  words.length > 1 ? `${words[0][0]}${words[1][0]}` : title.slice(0, 2)
+).toUpperCase();
+---
+
+<a class="card" href={href} data-categories={categories.join('|')}>
+  <span class="media surface">
+    {
+      heroImage ? (
+        <Img width={800} height={600} src={heroImage} alt="" loading="lazy" decoding="async" />
+      ) : (
+        <span class="monogram" aria-hidden="true">
+          {monogram}
+        </span>
+      )
+    }
+  </span>
+
+  <span class="body">
+    <span class="text-lg leading-none title">{title}</span>
+    <span class="muted text-lg leading-7">{description}</span>
+  </span>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .media {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    height: 15.5rem;
+  }
+
+  @media (min-width: 480px) {
+    .media {
+      height: 20rem;
+    }
+  }
+
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 300ms var(--ease);
+  }
+
+  @media (hover: hover) {
+    .card:hover .media :global(img) {
+      transform: scale(1.05);
+    }
+  }
+
+  .monogram {
+    color: var(--muted-foreground);
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-inline: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .body {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .body {
+      padding-inline: 2.5625rem;
+    }
+  }
+
+  .title {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+</style>

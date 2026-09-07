@@ -1,56 +1,60 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import BlogTopNav from '../../components/blog/BlogTopNav.astro';
-import BlogArchive from '../../components/blog/BlogArchive.astro';
-import GroupNav from '../../components/blog/GroupNav.astro';
-import { getSiteConfig } from '../../data/site';
-import { sortBlogPostsForArchive } from '../../utils/content-dates';
+import PostRow from '../../components/PostRow.astro';
+import Site from '../../layouts/Site.astro';
+import { getSiteConfig } from '../../utils/site';
+import { sortByDateDesc } from '../../utils/content';
+import { withBase } from '../../utils/projects';
 
-const { site, theme, blog } = await getSiteConfig();
-const palette = theme.palette;
-const posts = sortBlogPostsForArchive(await getCollection('blog', ({ data }) => !data.draft));
-const postsPerPage = blog.postsPerPage;
-const totalPages = Math.max(1, Math.ceil(posts.length / postsPerPage));
-const page = {
-  data: posts.slice(0, postsPerPage),
-  currentPage: 1,
-  lastPage: totalPages,
-  total: posts.length,
-  size: postsPerPage,
-  url: {
-    current: '/blog/',
-    next: totalPages > 1 ? '/blog/page/2/' : undefined,
-  },
-};
+const { site } = await getSiteConfig();
+const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.draft));
 ---
 
-<!doctype html>
-<html lang="en" data-palette={palette}>
-  <head>
-    <BaseHead title={site.title} description={site.description} />
-    <style>
-      main {
-        width: min(100%, var(--layout-shell-width));
-        max-width: none;
-        padding: 118px var(--layout-page-gutter) var(--layout-page-bottom);
-      }
+<Site title={`Writing | ${site.title}`} description={site.description}>
+  <section class="hero-padding container head">
+    <h1 class="text-3xl md:text-4xl">Writing &amp; notes</h1>
+    <p class="muted text-lg">
+      Documentation systems, AI automation, and what I learn building them.
+    </p>
+  </section>
 
-      @media (max-width: 720px) {
-        main {
-          padding-top: 88px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <BlogTopNav />
-    <main data-pagefind-body>
-      <BlogArchive page={page}>
-        <GroupNav slot="after-header" />
-      </BlogArchive>
-    </main>
-    <Footer />
-  </body>
-</html>
+  <section class="section-padding bigger-container pt-0">
+    {
+      posts.length > 0 ? (
+        <ul class="rows">
+          {posts.map((post, i) => (
+            <PostRow
+              href={withBase(`/blog/${post.id}/`)}
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date}
+              delay={i * 80}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">No posts published yet.</p>
+      )
+    }
+  </section>
+</Site>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .pt-0 {
+    padding-top: 0;
+  }
+
+  .rows {
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    list-style: none;
+  }
+</style>

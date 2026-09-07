@@ -31,23 +31,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Install font subsetting tools
-        run: python -m pip install --user fonttools brotli
-
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Build site
-        env:
-          # No SITE_URL/SITE_BASE: astro.config.mjs auto-detects the GitHub
-          # Pages project page and serves under /mysite/. To move to a custom
-          # domain later, re-add public/CNAME and set SITE_URL/SITE_BASE=/.
-          NAVFOLIO_COMMENTS_ENABLED: ${{ vars.NAVFOLIO_COMMENTS_ENABLED }}
-          NAVFOLIO_COMMENTS_PROVIDER: ${{ vars.NAVFOLIO_COMMENTS_PROVIDER }}
-          NAVFOLIO_GISCUS_REPO: ${{ vars.NAVFOLIO_GISCUS_REPO }}
-          NAVFOLIO_GISCUS_REPO_ID: ${{ vars.NAVFOLIO_GISCUS_REPO_ID }}
-          NAVFOLIO_GISCUS_CATEGORY: ${{ vars.NAVFOLIO_GISCUS_CATEGORY }}
-          NAVFOLIO_GISCUS_CATEGORY_ID: ${{ vars.NAVFOLIO_GISCUS_CATEGORY_ID }}
+        # No SITE_URL/SITE_BASE here: astro.config.mjs auto-detects the GitHub
+        # Pages project page and serves under /portfolio/. For a custom domain,
+        # add public/CNAME and set SITE_URL plus SITE_BASE=/.
         run: bun run build
 
       - name: Upload artifact

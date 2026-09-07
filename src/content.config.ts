@@ -2,62 +2,30 @@ import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-type CollectionSchemaFactory = Extract<
-  Parameters<typeof defineCollection>[0]['schema'],
-  (...args: any[]) => any
->;
+type SchemaContext = Parameters<
+  Extract<Parameters<typeof defineCollection>[0]['schema'], Function>
+>[0];
 
-const sidebarSchema = z
-  .object({
-    enable: z.boolean().optional(),
-    toc: z.boolean().optional(),
-    relatedPosts: z.boolean().optional(),
-  })
-  .optional();
+/** Hero images may be a local asset (optimised by Astro) or a remote URL (not). */
+const imageSchema = ({ image }: SchemaContext) =>
+  z.union([
+    image(),
+    z.url().refine((src) => /^https?:\/\//i.test(src), 'Remote images need an http(s) URL'),
+  ]);
 
-const remoteImageSchema = z
-  .url()
-  .refine((src) => /^https?:\/\//i.test(src), 'Remote images must start with http:// or https://');
-
-const contentImageSchema = ({ image }: Parameters<CollectionSchemaFactory>[0]) =>
-  z.union([image(), remoteImageSchema]);
-
-const articleSchema = ({ image }: Parameters<CollectionSchemaFactory>[0]) =>
+/** Shared by every long-form page: blog posts, project write-ups, and About. */
+const articleSchema = (context: SchemaContext) =>
   z.object({
     title: z.string(),
     description: z.string(),
-    // Creation date. Accepts ISO 8601 strings and plain dates such as YYYY-MM-DD.
+    /** ISO 8601 or plain YYYY-MM-DD. */
     date: z.coerce.date(),
     draft: z.boolean().optional().default(false),
-    heroImage: z.optional(contentImageSchema({ image })),
+    heroImage: imageSchema(context).optional(),
     showHeroImage: z.boolean().optional().default(true),
     tags: z.array(z.string()).optional().default([]),
     categories: z.array(z.string()).optional().default([]),
-    series: z.array(z.string()).optional().default([]),
-    comments: z.boolean().optional().default(true),
-    sidebar: sidebarSchema,
   });
-
-const blogArticleSchema = (context: Parameters<CollectionSchemaFactory>[0]) =>
-  articleSchema(context).extend({
-    sticky: z.union([z.boolean(), z.number().positive()]).optional().default(false),
-  });
-
-const contentSource = process.env.NAVFOLIO_CONTENT_SOURCE === 'docs' ? 'docs' : 'content';
-const contentBase = contentSource === 'docs' ? './src/docs' : './src/content';
-
-const commentProviderSchema = z.enum(['giscus', 'utterances', 'waline', 'none']);
-const mathRendererSchema = z.enum(['katex', 'mathjax']);
-const paletteSchema = z.enum([
-  'green-soft',
-  'green-vivid',
-  'rose-soft',
-  'pink-soft',
-  'purple-soft',
-  'blue-soft',
-  'orange-soft',
-  'brown-soft',
-]);
 
 const collapseStyleSchema = z.enum([
   'github',
@@ -66,82 +34,11 @@ const collapseStyleSchema = z.enum([
   'collapsible-auto',
 ]);
 
-const defaultCodeConfig = {
-  lightTheme: 'catppuccin-latte',
-  darkTheme: 'catppuccin-macchiato',
-  lineNumbers: true,
-  wrap: true,
-  preserveIndent: true,
-  collapseStyle: 'github',
-} as const;
-
-const defaultMathConfig = {
-  render: 'katex',
-} satisfies {
-  render: z.infer<typeof mathRendererSchema>;
-};
-
-const defaultGiscusConfig = {
-  repo: '',
-  repo_id: '',
-  category: '',
-  category_id: '',
-  mapping: 'pathname',
-  strict: '0',
-  reactions_enabled: '1',
-  emit_metadata: '0',
-  input_position: 'bottom',
-  light_theme: 'github-light',
-  dark_theme: 'github-dark',
-  lang: 'en',
-  loading: 'lazy',
-};
-
-const defaultUtterancesConfig = {
-  repo: '',
-  issue_term: 'pathname',
-  label: 'comment',
-  theme: 'github-light',
-};
-
-const defaultWalineConfig = {
-  server_url: '',
-  lang: 'en',
-  dark: 'html.dark',
-  pageview: true,
-  comment: true,
-};
-
-const defaultCommentsConfig = {
-  enabled: false,
-  provider: 'none',
-  show_on_posts: true,
-  giscus: defaultGiscusConfig,
-  utterances: defaultUtterancesConfig,
-  waline: defaultWalineConfig,
-} satisfies {
-  enabled: boolean;
-  provider: z.infer<typeof commentProviderSchema>;
-  show_on_posts: boolean;
-  giscus: typeof defaultGiscusConfig;
-  utterances: typeof defaultUtterancesConfig;
-  waline: typeof defaultWalineConfig;
-};
-
-const linkSchema = z.object({
-  label: z.string(),
-  href: z.string(),
-  icon: z.string().optional(),
-  disabled: z.boolean().optional().default(false),
-});
-
-const navigationItemSchema = z.object({
-  icon: z.string(),
-  title: z.string(),
-  subtitle: z.string(),
-  href: z.string(),
-});
-
+/**
+ * src/config/site.toml, validated. Anything missing or misspelled fails the
+ * build rather than rendering blank, so this schema is the contract for what
+ * the site actually reads.
+ */
 const siteConfig = defineCollection({
   loader: file('./src/config/site.toml'),
   schema: z.object({
@@ -150,85 +47,8 @@ const siteConfig = defineCollection({
       description: z.string(),
       pageTitle: z.string(),
       pageDescription: z.string(),
-      repository: z.url(),
-      footerNote: z.string(),
     }),
-    vibe: z
-      .object({
-        showTrail: z.boolean().optional().default(true),
-      })
-      .optional()
-      .default({ showTrail: true }),
-    theme: z
-      .object({
-        palette: paletteSchema.optional().default('green-soft'),
-      })
-      .optional()
-      .default({
-        palette: 'green-soft',
-      }),
-    code: z
-      .object({
-        lightTheme: z.string().optional().default(defaultCodeConfig.lightTheme),
-        darkTheme: z.string().optional().default(defaultCodeConfig.darkTheme),
-        lineNumbers: z.boolean().optional().default(defaultCodeConfig.lineNumbers),
-        wrap: z.boolean().optional().default(defaultCodeConfig.wrap),
-        preserveIndent: z.boolean().optional().default(defaultCodeConfig.preserveIndent),
-        collapseStyle: collapseStyleSchema.optional().default(defaultCodeConfig.collapseStyle),
-      })
-      .optional()
-      .default(defaultCodeConfig),
-    math: z
-      .object({
-        render: mathRendererSchema.optional().default(defaultMathConfig.render),
-      })
-      .optional()
-      .default(defaultMathConfig),
-    comments: z
-      .object({
-        enabled: z.boolean().optional().default(false),
-        provider: commentProviderSchema.optional().default('none'),
-        show_on_posts: z.boolean().optional().default(true),
-        giscus: z
-          .object({
-            repo: z.string().optional().default(''),
-            repo_id: z.string().optional().default(''),
-            category: z.string().optional().default(''),
-            category_id: z.string().optional().default(''),
-            mapping: z.string().optional().default('pathname'),
-            strict: z.string().optional().default('0'),
-            reactions_enabled: z.string().optional().default('1'),
-            emit_metadata: z.string().optional().default('0'),
-            input_position: z.string().optional().default('bottom'),
-            light_theme: z.string().optional().default('light'),
-            dark_theme: z.string().optional().default('dark'),
-            lang: z.string().optional().default('en'),
-            loading: z.string().optional().default('lazy'),
-          })
-          .optional()
-          .default(defaultGiscusConfig),
-        utterances: z
-          .object({
-            repo: z.string().optional().default(''),
-            issue_term: z.string().optional().default('pathname'),
-            label: z.string().optional().default('comment'),
-            theme: z.string().optional().default('github-light'),
-          })
-          .optional()
-          .default(defaultUtterancesConfig),
-        waline: z
-          .object({
-            server_url: z.string().optional().default(''),
-            lang: z.string().optional().default('en'),
-            dark: z.string().optional().default('html.dark'),
-            pageview: z.boolean().optional().default(true),
-            comment: z.boolean().optional().default(true),
-          })
-          .optional()
-          .default(defaultWalineConfig),
-      })
-      .optional()
-      .default(defaultCommentsConfig),
+
     profile: z.object({
       name: z.string(),
       handle: z.string(),
@@ -236,72 +56,49 @@ const siteConfig = defineCollection({
       company: z.string(),
       location: z.string(),
       email: z.email(),
-      website: z.url(),
       github: z.url(),
+      linkedin: z.url(),
       meta: z.string(),
       avatar: z.string(),
     }),
-    topNav: z.object({
-      links: z.array(linkSchema.omit({ icon: true })),
+
+    /** Read by ec.config.mjs to theme code blocks. */
+    code: z.object({
+      lightTheme: z.string(),
+      darkTheme: z.string(),
+      lineNumbers: z.boolean(),
+      wrap: z.boolean(),
+      preserveIndent: z.boolean(),
+      collapseStyle: collapseStyleSchema,
     }),
-    search: z
-      .object({
-        enabled: z.boolean().optional().default(true),
-        shortcut: z.enum(['mod+k']).optional().default('mod+k'),
-        placeholder: z.string().optional().default('Search notes...'),
-        maxResults: z.number().int().positive().optional().default(6),
-      })
-      .optional()
-      .default({
-        enabled: true,
-        shortcut: 'mod+k',
-        placeholder: 'Search notes...',
-        maxResults: 6,
-      }),
-    blog: z
-      .object({
-        postsPerPage: z.number().int().positive().optional().default(6),
-      })
-      .optional()
-      .default({
-        postsPerPage: 6,
-      }),
+
     home: z.object({
-      layout: z.enum(['grid']),
-      quote: z.object({
-        text: z.array(z.string()).min(1),
-        image: z.string(),
-      }),
       intro: z.object({
         title: z.string(),
-        name: z.string(),
-        body: z.array(z.string()).min(1),
-        image: z.string(),
       }),
-      latest: z
-        .object({
-          count: z.number().int().positive().default(1),
-          heatmapWeeks: z.number().int().positive().default(24),
-          showHeatmapLatest: z.boolean().optional().default(true),
-          excludeDraft: z.boolean().optional().default(true),
-          startDate: z.string().optional().default(''),
-          dateArchiveBaseHref: z.string().optional().default(''),
-        })
-        .optional()
-        .default({
-          count: 1,
-          heatmapWeeks: 24,
-          showHeatmapLatest: true,
-          excludeDraft: true,
-          startDate: '',
-          dateArchiveBaseHref: '',
-        }),
-      navigation: z.array(navigationItemSchema),
-      connect: z.array(linkSchema.required({ icon: true })),
+      about: z.array(z.string()),
+      skills: z.array(z.string()),
       doing: z.array(
         z.object({
           text: z.string(),
           mark: z.string(),
+        }),
+      ),
+      stack: z.array(
+        z.object({
+          name: z.string(),
+          /** A name from src/components/Icon.astro. */
+          icon: z.string(),
+          /** Brand colour the tile fades to on hover. */
+          color: z.string().optional().default(''),
+        }),
+      ),
+      experience: z.array(
+        z.object({
+          company: z.string(),
+          href: z.string().optional().default(''),
+          role: z.string(),
+          period: z.string(),
         }),
       ),
     }),
@@ -309,37 +106,18 @@ const siteConfig = defineCollection({
 });
 
 const blog = defineCollection({
-  loader: glob({ base: `${contentBase}/blog`, pattern: '**/*.{md,mdx}' }),
-  // Type-check frontmatter using a schema
-  schema: blogArticleSchema,
-});
-
-const about = defineCollection({
-  loader: glob({ base: contentBase, pattern: 'about.{md,mdx}' }),
+  loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
   schema: articleSchema,
 });
 
 const projects = defineCollection({
-  loader: glob({ base: `${contentBase}/projects`, pattern: '**/*.{md,mdx}' }),
+  loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
   schema: articleSchema,
 });
 
-const vibe = defineCollection({
-  loader: glob({ base: `${contentBase}/vibe`, pattern: '**/*.{md,mdx}' }),
-  schema: ({ image }) =>
-    z.object({
-      title: z.string().optional(),
-      date: z.coerce.date(),
-      updatedDate: z.coerce.date().optional(),
-      draft: z.boolean().optional().default(false),
-      type: z.enum(['text', 'photo', 'quote', 'code', 'mixed']).optional().default('text'),
-      mood: z.string().optional(),
-      location: z.string().optional(),
-      images: z.array(contentImageSchema({ image })).optional().default([]),
-      tags: z.array(z.string()).optional().default([]),
-      align: z.enum(['left', 'right', 'center']).optional(),
-      size: z.enum(['sm', 'md', 'lg']).optional().default('md'),
-    }),
+const about = defineCollection({
+  loader: glob({ base: './src/content', pattern: 'about.{md,mdx}' }),
+  schema: articleSchema,
 });
 
-export const collections = { about, blog, projects, vibe, siteConfig };
+export const collections = { about, blog, projects, siteConfig };

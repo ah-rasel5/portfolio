@@ -1,21 +1,27 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogArticle from '../../layouts/BlogArticle.astro';
-import ZoomableImage from '../../components/mdx/ZoomableImage.astro';
+import { getCollection, render } from 'astro:content';
+import Article from '../../layouts/Article.astro';
+import { sortByDateDesc } from '../../utils/content';
+import { withBase } from '../../utils/projects';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: post,
-  }));
+  const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.draft));
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
-const { Content, headings } = await render(post);
+const { post } = Astro.props;
+const { Content } = await render(post);
 ---
 
-<BlogArticle post={post} headings={headings}>
-  <Content components={{ img: ZoomableImage }} />
-</BlogArticle>
+<Article
+  title={post.data.title}
+  description={post.data.description}
+  date={post.data.date}
+  heroImage={post.data.heroImage}
+  showHeroImage={post.data.showHeroImage}
+  tags={post.data.tags}
+  backHref={withBase('/blog')}
+  backLabel="All posts"
+>
+  <Content />
+</Article>
