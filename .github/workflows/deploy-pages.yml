@@ -35,9 +35,12 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build site
-        # No SITE_URL/SITE_BASE here: astro.config.mjs auto-detects the GitHub
-        # Pages project page and serves under /portfolio/. For a custom domain,
-        # add public/CNAME and set SITE_URL plus SITE_BASE=/.
+        # Custom domain: public/CNAME points Pages at ahamedrasel.com, and these
+        # override the astro.config.mjs auto-detection that would otherwise serve
+        # the repo as a project page under /portfolio/.
+        env:
+          SITE_URL: https://ahamedrasel.com
+          SITE_BASE: /
         run: bun run build
 
       - name: Upload artifact

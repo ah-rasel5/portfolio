@@ -22,6 +22,13 @@ const avatar = siteImages[profile.avatar]?.default ?? profile.avatar;
 
 const projects = (await getProjects()).slice(0, 4);
 const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.draft)).slice(0, 3);
+
+// The reel loops by translating a doubled track -50%, so the base set has to be
+// wide enough to fill the viewport on its own. With only a couple of projects
+// that means repeating them.
+const reelBase = projects.length
+  ? Array.from({ length: Math.ceil(4 / projects.length) }, () => projects).flat()
+  : [];
 ---
 
 <Site title={site.pageTitle} description={site.pageDescription}>
@@ -44,30 +51,43 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
     </div>
   </section>
 
-  {/* ---------- selected work ---------- */}
+  {/* ---------- works ---------- */}
   {
     projects.length > 0 && (
       <section class="section-padding bigger-container stack pt-0">
         <div class="inner-container block-head">
-          <h2 class="text-2xl leading-none">Selected work</h2>
+          <h2 class="text-2xl leading-none">Works</h2>
           <a class="link-underline text-lg leading-none" href={withBase('/projects')}>
             View all
           </a>
         </div>
 
-        <ul class="card-grid">
-          {projects.map((p, i) => (
-            <li class="reveal-scale" style={`--reveal-delay:${i * 90}ms`}>
-              <ProjectCard
-                href={withBase(`/projects/${p.id}/`)}
-                title={p.data.title}
-                description={p.data.description}
-                heroImage={p.data.heroImage}
-                categories={p.data.categories}
-              />
-            </li>
-          ))}
-        </ul>
+        <div class="reel" data-reel>
+          <ul class="reel-track" style={`--reel-duration:${reelBase.length * 7}s`}>
+            {reelBase.map((p) => (
+              <li class="reel-item">
+                <ProjectCard
+                  href={withBase(`/projects/${p.id}/`)}
+                  title={p.data.title}
+                  description={p.data.description}
+                  heroImage={p.data.heroImage}
+                  categories={p.data.categories}
+                />
+              </li>
+            ))}
+            {reelBase.map((p) => (
+              <li class="reel-item" data-clone aria-hidden="true">
+                <ProjectCard
+                  href={withBase(`/projects/${p.id}/`)}
+                  title={p.data.title}
+                  description={p.data.description}
+                  heroImage={p.data.heroImage}
+                  categories={p.data.categories}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
     )
   }
@@ -199,6 +219,12 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
       cta.style.setProperty('--my', `${event.clientY - rect.top}px`);
     });
   }
+
+  // The reel's second half is a visual clone: hidden from screen readers, and
+  // pulled out of the tab order here so it doesn't double every link.
+  for (const link of document.querySelectorAll('[data-clone] a')) {
+    link.setAttribute('tabindex', '-1');
+  }
 </script>
 
 <style>
@@ -313,17 +339,73 @@ const posts = sortByDateDesc(await getCollection('blog', ({ data }) => !data.dra
     justify-content: space-between;
   }
 
-  /* selected work */
-  .card-grid {
-    display: grid;
-    gap: 2.5rem 1.25rem;
-    padding: 0;
-    list-style: none;
+  /* works — a continuously scrolling reel. The track holds the set twice over
+     and slides exactly half its width, so the seam is invisible and the loop
+     never resets visibly. Hover or keyboard focus pauses it. */
+  .reel {
+    --reel-gap: 1.5rem;
+
+    position: relative;
+    overflow: hidden;
+    /* cards fade in and out at the edges instead of being cut off */
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 5rem,
+      #000 calc(100% - 5rem),
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 5rem,
+      #000 calc(100% - 5rem),
+      transparent
+    );
   }
 
-  @media (min-width: 768px) {
-    .card-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  .reel-track {
+    display: flex;
+    gap: var(--reel-gap);
+    width: max-content;
+    margin: 0;
+    padding: 1rem 0 1.5rem;
+    list-style: none;
+    animation: reel var(--reel-duration, 40s) linear infinite;
+  }
+
+  .reel:hover .reel-track,
+  .reel:focus-within .reel-track {
+    animation-play-state: paused;
+  }
+
+  .reel-item {
+    flex: 0 0 clamp(16rem, 74vw, 22rem);
+    transition: transform 300ms var(--ease);
+  }
+
+  @media (hover: hover) {
+    .reel-item:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes reel {
+    to {
+      transform: translateX(calc(-50% - var(--reel-gap) / 2));
+    }
+  }
+
+  /* No motion: drop the animation and hand the track back to the scrollbar. */
+  @media (prefers-reduced-motion: reduce) {
+    .reel {
+      overflow-x: auto;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+
+    .reel-track {
+      animation: none;
     }
   }
 

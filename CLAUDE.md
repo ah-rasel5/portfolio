@@ -128,10 +128,16 @@ plain string URLs fall through to `<img>`).
 `.github/workflows/deploy-pages.yml` builds with Bun and publishes `dist/` to GitHub Pages
 on push to `main`/`master`.
 
-`astro.config.mjs` auto-detects the target from GitHub Actions env vars — as a project page
-it serves under `base = /portfolio` at `https://ah-rasel5.github.io/portfolio`. For a custom
-domain, add `public/CNAME` and set `SITE_URL=https://yourdomain` + `SITE_BASE=/`, which
-override the auto-detection unconditionally.
+The site is served from the custom domain **`https://ahamedrasel.com`** (DNS at Cloudflare,
+hosting on GitHub Pages). Two things make that work and both must stay in sync:
+
+- `public/CNAME` — contains `ahamedrasel.com`; GitHub Pages reads it on every deploy, so
+  deleting it resets the Pages custom-domain setting.
+- `SITE_URL` / `SITE_BASE` in the deploy workflow's build step — these override the
+  `astro.config.mjs` auto-detection, which would otherwise treat the repo as a project page
+  and serve everything under `/portfolio/`.
+
+Locally `bun run dev` still uses `site = http://localhost:4321`, `base = /`.
 
 ## Conventions
 
