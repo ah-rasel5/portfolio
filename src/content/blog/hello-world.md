@@ -1,13 +1,13 @@
 ---
 title: 'Documentation is a product decision'
-description: 'Why I treat docs as part of the product — and what this space is for.'
-date: '2026-07-03T00:00:00+06:00'
-draft: false
-showHeroImage: false
+excerpt: 'Why I treat docs as part of the product — and what this space is for.'
+publishDate: '2026-07-03T00:00:00+06:00'
+isFeatured: true
 tags:
   - Documentation
   - Writing
-comments: false
+seo:
+  description: 'Why I treat docs as part of the product — and what this space is for.'
 ---
 
 Welcome. I'm Ahamed Rasel, and this is where I write about the craft I spend my days on: turning complex software into documentation people can actually finish.

@@ -1,92 +1,25 @@
 ---
-import Site from '../layouts/Site.astro';
-import { withBase } from '../utils/projects';
+import Button from '../components/Button.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<Site
+<BaseLayout
   title="404 Not Found"
   description="This page isn't here — it may have moved, or it may not be written yet."
+  showHeader={false}
 >
-  <section class="shell">
-    <div class="container panel">
-      <p class="muted kicker">404</p>
-      <h1>This page isn't written yet.</h1>
-      <p class="muted copy">
-        The link may have moved, or this may be a path that never existed. Either way, the way back
-        is easy.
-      </p>
-      <div class="actions">
-        <a class="pill primary" href={withBase('/')}>Back to home</a>
-        <a class="pill" href={withBase('/blog')}>Read the blog</a>
-      </div>
+  <section class="mb-16 sm:mb-24">
+    <p class="mb-4 text-sm tracking-widest uppercase">404</p>
+    <h1 class="mb-6 font-serif text-3xl leading-tight font-medium sm:text-5xl sm:leading-tight">
+      This page isn't written yet.
+    </h1>
+    <p class="mb-10 text-lg sm:text-xl">
+      The link may have moved, or this may be a path that never existed. Either way, the way back is
+      easy.
+    </p>
+    <div class="flex flex-wrap gap-4">
+      <Button href="/">Back to home</Button>
+      <Button href="/blog">Read the blog</Button>
     </div>
   </section>
-</Site>
-
-<style>
-  .shell {
-    display: grid;
-    place-items: center;
-    min-height: 60vh;
-    padding-block: clamp(3rem, 10vw, 6rem);
-  }
-
-  .panel {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    max-width: 34rem;
-  }
-
-  .kicker {
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
-  }
-
-  h1 {
-    font-size: clamp(2rem, 6vw, 3rem);
-  }
-
-  .copy {
-    font-size: 1.05rem;
-    line-height: 1.65;
-  }
-
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-  }
-
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    height: 2.4rem;
-    padding-inline: 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-full);
-    color: var(--muted-foreground);
-    font-size: 0.9rem;
-    transition:
-      background 150ms var(--ease),
-      color 150ms var(--ease);
-  }
-
-  .pill:hover {
-    background: var(--accent);
-    color: var(--foreground);
-  }
-
-  .primary {
-    border-color: transparent;
-    background: var(--foreground);
-    color: var(--background);
-  }
-
-  .primary:hover {
-    background: var(--foreground);
-    color: var(--background);
-    opacity: 0.88;
-  }
-</style>
+</BaseLayout>

@@ -1,20 +1,14 @@
 ---
 title: 'Fluent Suite Knowledge Base'
 description: 'Leading documentation for the eight-plugin Fluent suite by WPManageNinja — the guides, KB articles, and release notes behind 1.47M+ WordPress sites.'
-date: '2026-05-01T00:00:00+06:00'
-draft: false
-showHeroImage: false
-categories:
-  - Documentation
+publishDate: '2026-05-01T00:00:00+06:00'
+isFeatured: true
 tags:
-  - Technical Writing
   - Documentation
+  - Technical Writing
   - WordPress
-comments: false
-sidebar:
-  enable: false
-  toc: false
-  relatedPosts: false
+seo:
+  description: 'Leading documentation for the eight-plugin Fluent suite by WPManageNinja — the guides, KB articles, and release notes behind 1.47M+ WordPress sites.'
 ---
 
 ## Overview

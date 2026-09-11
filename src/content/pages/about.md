@@ -1,17 +1,14 @@
 ---
-title: 'About'
-description: 'Ahamed Rasel — I make complex software make sense, and build the AI systems that keep it that way. Documentation, at million-user scale.'
-date: '2026-07-03T00:00:00+06:00'
-draft: false
-showHeroImage: false
-tags:
-  - About
-comments: false
-sidebar:
-  enable: false
-  toc: false
-  relatedPosts: false
+title: About
+seo:
+  title: About
+  description: 'Ahamed Rasel — I make complex software make sense, and build the AI systems that keep it that way. Documentation, at million-user scale.'
+  image:
+    src: '../../assets/figure/og-card.png'
+    alt: 'Ahamed Rasel — Technical Writer & AI Automation'
 ---
+
+_Senior Technical Writer · AuthLab · WPManageNinja · Sylhet, Bangladesh · Remote_
 
 Hi, I'm **Ahamed Rasel**. I make complicated software make sense.
 
@@ -35,6 +32,31 @@ That's the short version of who I am: **a writer who thinks like an engineer.**
 
 The automation work pulled me deep into practical AI: designing agent pipelines, wiring them together in n8n, and figuring out what actually holds up when you put a language model inside a real production system. It's become a craft of its own — and a lot of what I write about.
 
+## Skills
+
+- Documentation strategy & information architecture
+- Developer-facing API & integration docs
+- Docs-as-code (Git, Markdown, CI review)
+- AI agent pipelines (Claude, Codex, Google AI Studio)
+- n8n workflow automation
+- Knowledge base migration at scale
+- Style systems & editorial review
+- Release notes & changelogs
+
+## Currently
+
+1. Running the AI agent pipeline — Claude, Codex, Google AI Studio — that keeps a 1.47M-site knowledge base current
+2. Orchestrating the docs lifecycle end to end in n8n: a product change goes in, a review-ready draft comes out
+3. Writing about docs as product, prompt engineering, and automation that holds up in production
+
+## Stack
+
+Claude · n8n · Markdown · Git · Astro · VitePress · WordPress · GitHub
+
+## Experience
+
+**Senior Technical Writer** — [AuthLab · WPManageNinja](https://wpmanageninja.com) · Present
+
 ## Let's talk
 
 If you care about clear documentation, AI workflows, or automating the boring parts of knowledge work, I'd enjoy the conversation.
@@ -43,4 +65,4 @@ If you care about clear documentation, AI workflows, or automating the boring pa
 - LinkedIn — [md-rasel-ahamed](https://www.linkedin.com/in/md-rasel-ahamed-8a4b72195)
 - GitHub — [ah-rasel5](https://github.com/ah-rasel5)
 
-_Prefer the formal version — roles, dates, credentials?_ <a href={`${import.meta.env.BASE_URL}Md-Rasel-Ahamed-Resume.pdf`} target="\_blank" rel="noopener noreferrer">Here's my résumé (PDF)</a>.
+_Prefer the formal version — roles, dates, credentials?_ [Here's my résumé (PDF)](/Md-Rasel-Ahamed-Resume.pdf).

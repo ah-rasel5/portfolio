@@ -1,20 +1,14 @@
 ---
 title: 'AI-Powered Knowledge Base Automation'
 description: 'A multi-tool AI agent pipeline, orchestrated in n8n, that keeps a 1.47M-user knowledge base accurate — drafting, reviewing, and flagging content across its entire lifecycle.'
-date: '2026-06-01T00:00:00+06:00'
-draft: false
-showHeroImage: false
-categories:
-  - AI Automation
+publishDate: '2026-06-01T00:00:00+06:00'
+isFeatured: true
 tags:
   - AI Automation
   - n8n
   - Documentation
-comments: false
-sidebar:
-  enable: false
-  toc: false
-  relatedPosts: false
+seo:
+  description: 'A multi-tool AI agent pipeline, orchestrated in n8n, that keeps a 1.47M-user knowledge base accurate across its entire lifecycle.'
 ---
 
 ## The problem

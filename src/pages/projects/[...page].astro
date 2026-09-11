@@ -1,0 +1,33 @@
+---
+import type { GetStaticPathsOptions, Page } from 'astro';
+import { type CollectionEntry, getCollection } from 'astro:content';
+import Pagination from '../../components/Pagination.astro';
+import ProjectPreview from '../../components/ProjectPreview.astro';
+import siteConfig from '../../data/site-config';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sortItemsByDateDesc, getPublished } from '../../utils/data-utils';
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const projects = getPublished(await getCollection('projects')).sort(sortItemsByDateDesc);
+  return paginate(projects, { pageSize: siteConfig.projectsPerPage || 6 });
+}
+
+type Props = { page: Page<CollectionEntry<'projects'>> };
+
+const { page } = Astro.props;
+const portfolio = page.data;
+---
+
+<BaseLayout
+  title="Projects"
+  description="Documentation systems and AI automation I have designed, built, and shipped."
+  showHeader={false}
+>
+  <h1 class="mb-6 font-serif text-2xl leading-tight italic sm:mb-8 sm:text-4xl">Projects</h1>
+  <p class="mb-12 text-lg sm:mb-16 sm:text-xl">
+    The systems behind the words. These are the documentation platforms and AI automation I've
+    designed and shipped — where technical writing meets real engineering.
+  </p>
+  {portfolio.map((project) => <ProjectPreview project={project} class="mb-10 sm:mb-12" />)}
+  <Pagination page={page} class="my-16 sm:my-24" />
+</BaseLayout>

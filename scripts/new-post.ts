@@ -37,8 +37,9 @@ const title = slug.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
 
 const frontmatter = `---
 title: '${title}'
-description: ''
-date: ${new Date().toISOString().slice(0, 10)}
+excerpt: ''
+publishDate: ${new Date().toISOString().slice(0, 10)}
+isFeatured: false
 draft: true
 tags: []
 ---
